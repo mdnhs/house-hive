@@ -31,6 +31,8 @@ interface SearchPanelProps {
     spaceType?: string;
     designStyle?: string;
   }) => void;
+  collapsed?: boolean;
+  onExpand?: () => void;
 }
 
 export function SearchPanel({
@@ -39,6 +41,8 @@ export function SearchPanel({
   activeCell,
   setActiveCell,
   onSearch,
+  collapsed = false,
+  onExpand,
 }: SearchPanelProps) {
   // Flat state
   const [flatLocation, setFlatLocation] = React.useState("");
@@ -501,13 +505,68 @@ export function SearchPanel({
     }
   };
 
+  const location =
+    activeTab === "Flat" ? flatLocation : interiorLocation;
+  const locationLabel = location
+    ? location.split(" ")[0]
+    : "Anywhere";
+  const secondLabel =
+    activeTab === "Flat"
+      ? flatBudget && flatBudget !== "Any Budget"
+        ? flatBudget
+        : "Any budget"
+      : interiorSpaceType || "Space type";
+  const thirdLabel =
+    activeTab === "Flat"
+      ? flatBedrooms || (flatSize && flatSize !== "Any" ? flatSize : "Add details")
+      : interiorDesignStyle || "Style type";
+
   return (
     <div className="w-full max-w-4xl mx-auto search-capsule-container relative">
-      {/* Search Capsule Wrapper (Airbnb Stays/Experiences-style search bar) */}
+      {/* Collapsed pill - cross-fades with capsule */}
       <div
-        ref={capsuleRef}
         className={cn(
-          "w-full rounded-full border border-zinc-200 dark:border-zinc-800 transition-all duration-300 shadow-[0_3px_12px_rgba(0,0,0,0.06)] relative",
+          "flex items-center justify-center transition-all duration-500 ease-out",
+          collapsed
+            ? "opacity-100 scale-100 pointer-events-auto"
+            : "opacity-0 scale-75 pointer-events-none absolute",
+        )}
+      >
+        <button
+          onClick={() => onExpand?.()}
+          className="flex items-center h-11 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.06)] hover:scale-[1.01] transition-all duration-200 pl-5 pr-1.5 cursor-pointer select-none"
+        >
+          <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[80px]">
+            {locationLabel}
+          </span>
+          <div className="w-px h-4 bg-zinc-200 dark:bg-zinc-800 mx-3 shrink-0" />
+          <span className="text-xs font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[90px]">
+            {secondLabel}
+          </span>
+          <div className="w-px h-4 bg-zinc-200 dark:bg-zinc-800 mx-3 shrink-0" />
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 truncate max-w-[100px]">
+            {thirdLabel}
+          </span>
+          <div className="ml-3 flex items-center justify-center size-8 rounded-full bg-[#FF385C] text-white shrink-0">
+            <Search className="size-3.5 stroke-[2.5]" />
+          </div>
+        </button>
+      </div>
+
+      {/* Expanded capsule - cross-fades with pill */}
+      <div
+        className={cn(
+          "transition-all duration-500 ease-out relative",
+          collapsed
+            ? "opacity-0 scale-75 pointer-events-none absolute inset-0"
+            : "opacity-100 scale-100 pointer-events-auto",
+        )}
+      >
+        {/* Search Capsule Wrapper (Airbnb Stays/Experiences-style search bar) */}
+        <div
+          ref={capsuleRef}
+          className={cn(
+            "w-full rounded-full border border-zinc-200 dark:border-zinc-800 transition-all duration-300 shadow-[0_3px_12px_rgba(0,0,0,0.06)] relative",
           activeCell
             ? "bg-[#F3F3F3] dark:bg-[#1C1C1E] border-transparent shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
             : "bg-white dark:bg-zinc-800 hover:shadow-[0_4px_16px_rgba(0,0,0,0.09)]",
@@ -632,34 +691,34 @@ export function SearchPanel({
             </div>
           </>
         )}
-      </div>
-
-      {/* Floating search button (Airbnb-style) */}
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 z-30 hidden md:flex">
-        <Button
-          onClick={handleSearch}
-          className={cn(
-            "rounded-full bg-[#FF385C] hover:bg-[#E61E4D] text-white flex items-center justify-center shadow-md shadow-red-500/30 hover:shadow-lg transition-all duration-500 ease-out active:scale-[0.97] overflow-hidden",
-            activeCell ? "w-[118px] h-12 px-5 justify-between" : "size-12",
-          )}
-        >
-          <Search className="size-5 shrink-0" />
-          {activeCell && (
-            <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300 fill-mode-both">
-              Search
-            </span>
-          )}
-        </Button>
-      </div>
-      {/* Mobile search button */}
-      <div className="p-2 flex md:hidden items-center justify-center z-30">
-        <Button
-          onClick={handleSearch}
-          className="w-full h-12 rounded-full bg-[#FF385C] hover:bg-[#E61E4D] text-white flex items-center justify-center shadow-md shadow-red-500/10 hover:shadow-lg transition-all duration-200 active:scale-[0.97]"
-        >
-          <Search className="size-5 shrink-0" />
-          <span className="text-sm font-bold ml-2">Search</span>
-        </Button>
+        </div>
+        {/* Floating search button (Airbnb-style) */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 z-30 hidden md:flex">
+          <Button
+            onClick={handleSearch}
+            className={cn(
+              "rounded-full bg-[#FF385C] hover:bg-[#E61E4D] text-white flex items-center justify-center shadow-md shadow-red-500/30 hover:shadow-lg transition-all duration-500 ease-out active:scale-[0.97] overflow-hidden",
+              activeCell ? "w-[118px] h-12 px-5 justify-between" : "size-12",
+            )}
+          >
+            <Search className="size-5 shrink-0" />
+            {activeCell && (
+              <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300 fill-mode-both">
+                Search
+              </span>
+            )}
+          </Button>
+        </div>
+        {/* Mobile search button */}
+        <div className="p-2 flex md:hidden items-center justify-center z-30">
+          <Button
+            onClick={handleSearch}
+            className="w-full h-12 rounded-full bg-[#FF385C] hover:bg-[#E61E4D] text-white flex items-center justify-center shadow-md shadow-red-500/10 hover:shadow-lg transition-all duration-200 active:scale-[0.97]"
+          >
+            <Search className="size-5 shrink-0" />
+            <span className="text-sm font-bold ml-2">Search</span>
+          </Button>
+        </div>
       </div>
 
       {/* Shared Popup - Single popup for all fields with width + position animation */}

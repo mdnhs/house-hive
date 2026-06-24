@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { SearchPanel } from "@/components/SearchPanel";
-import { CollapsedSearchPill } from "@/components/CollapsedSearchPill";
 import { ResultsGallery } from "@/components/ResultsGallery";
 import {
   FLATS_DATA,
@@ -10,16 +9,7 @@ import {
   FlatItem,
   InteriorItem,
 } from "@/lib/mockData";
-import {
-  Globe,
-  Menu,
-  User,
-  Home,
-  Sun,
-  Moon,
-  Building2,
-  Sofa,
-} from "lucide-react";
+import { Globe, Menu, User, Home, Sun, Moon, Building2, Sofa } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function HomePage() {
@@ -198,8 +188,8 @@ export default function HomePage() {
           isHeaderExpanded ? "h-60 overflow-visible" : "h-20 overflow-hidden",
         )}
       >
-        {/* Top Row: Logo, Center navigation (tabs or collapsed pill), Right Profile menu */}
-        <div className="h-20 w-full flex items-center justify-between px-6 sm:px-12 relative shrink-0">
+        {/* Top Row: Logo and Right Profile menu */}
+        <div className="h-20 w-full flex items-center justify-between px-6 sm:px-12 shrink-0">
           {/* Left: Brand Logo */}
           <div
             onClick={() => handleClearFilters()}
@@ -211,68 +201,6 @@ export default function HomePage() {
             <span className="text-xl font-black tracking-tight text-[#FF385C] hidden md:block">
               househive
             </span>
-          </div>
-
-          {/* Center Area: Morphing between tall stays/experiences links and collapsed pill */}
-          <div className="absolute left-1/2 -translate-x-1/2 h-full flex items-center">
-            {/* Expanded Center Tabs */}
-            <div
-              className={cn(
-                "flex items-center gap-6 sm:gap-8 h-full transition-all duration-300 ease-in-out",
-                isHeaderExpanded
-                  ? "opacity-100 scale-100 pointer-events-auto"
-                  : "opacity-0 scale-75 pointer-events-none",
-              )}
-            >
-              <button
-                onClick={() => handleTabChange("Flat")}
-                className={cn(
-                  "text-lg font-semibold h-full pt-2 relative flex items-center transition-all cursor-pointer",
-                  activeTab === "Flat"
-                    ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-0 after:left-0 after:right-0 after:rounded-full after:h-1 after:bg-zinc-950 dark:after:bg-zinc-50"
-                    : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
-                )}
-              >
-                <Building2 className="size-8 mr-1.5" />
-                Flat
-              </button>
-              <button
-                onClick={() => handleTabChange("Interior")}
-                className={cn(
-                  "text-lg font-semibold h-full relative flex pt-2 items-center transition-all cursor-pointer",
-                  activeTab === "Interior"
-                    ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-0 after:left-0 after:right-0 after:rounded-full after:h-1 after:bg-zinc-950 dark:after:bg-zinc-50"
-                    : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
-                )}
-              >
-                <Sofa className="size-8 mr-1.5" />
-                Interior
-              </button>
-            </div>
-
-            {/* Collapsed Search Pill (Visible when scrolled and overlay is closed) */}
-            <div
-              className={cn(
-                "w-full flex justify-center transition-all duration-300 ease-in-out",
-                !isHeaderExpanded
-                  ? "opacity-100 scale-100 pointer-events-auto"
-                  : "opacity-0 scale-125 pointer-events-none absolute",
-              )}
-            >
-              <CollapsedSearchPill
-                searchType={activeTab}
-                location={searchParams.location}
-                budget={searchParams.budget}
-                bedrooms={searchParams.bedrooms}
-                size={searchParams.size}
-                spaceType={searchParams.spaceType}
-                designStyle={searchParams.designStyle}
-                onClick={() => {
-                  setIsOverlaySearchOpen(true);
-                  setActiveCell("location");
-                }}
-              />
-            </div>
           </div>
 
           {/* Right: List property & Settings */}
@@ -304,13 +232,43 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Bottom Row: Large Search Panel Capsule */}
+        {/* Flat / Interior tabs (visible only when expanded) */}
+        {isHeaderExpanded && (
+          <div className="flex items-center justify-center gap-8 h-10 shrink-0">
+            <button
+              onClick={() => handleTabChange("Flat")}
+              className={cn(
+                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+                activeTab === "Flat"
+                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+              )}
+            >
+              <Building2 className="size-5" />
+              Flat
+            </button>
+            <button
+              onClick={() => handleTabChange("Interior")}
+              className={cn(
+                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+                activeTab === "Interior"
+                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+              )}
+            >
+              <Sofa className="size-5" />
+              Interior
+            </button>
+          </div>
+        )}
+
+        {/* SearchPanel (morphs between collapsed pill in top row and full capsule below) */}
         <div
           className={cn(
-            "h-30 w-full flex items-center justify-center px-6 sm:px-12 absolute bottom-0 left-0 right-0 transition-all duration-300 ease-in-out pb-4",
+            "flex items-center justify-center",
             isHeaderExpanded
-              ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
-              : "opacity-0 -translate-y-4 scale-75 pointer-events-none",
+              ? "flex-1 px-6 sm:px-12 pb-4"
+              : "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20",
           )}
         >
           <SearchPanel
@@ -318,6 +276,11 @@ export default function HomePage() {
             setActiveTab={setActiveTab}
             activeCell={activeCell}
             setActiveCell={setActiveCell}
+            collapsed={!isHeaderExpanded}
+            onExpand={() => {
+              setIsOverlaySearchOpen(true);
+              setActiveCell("location");
+            }}
             onSearch={(params) => {
               handleSearch(params);
               setIsOverlaySearchOpen(false);
