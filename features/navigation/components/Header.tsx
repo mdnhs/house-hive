@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Home, Sun, Moon, Globe, Menu, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SearchPanel } from "@/features/search/components/SearchPanel";
+import Link from "next/link";
 
 interface HeaderProps {
   activeTab: "Flat" | "Interior";
@@ -64,17 +65,17 @@ export function Header({
       {/* Top Row: Logo and Right Profile menu */}
       <div className="h-20 w-full grid grid-cols-3 items-center px-6 sm:px-12 shrink-0">
         {/* Left: Brand Logo */}
-        <div
-          onClick={() => onClearFilters()}
-          className="flex items-center gap-1.5 shrink-0 cursor-pointer"
-        >
-          <div className="text-[#FF385C]">
-            <Home className="size-8 stroke-[2.5]" />
-          </div>
-          <span className="text-xl font-black tracking-tight text-[#FF385C] hidden md:block">
-            househive
-          </span>
-        </div>
+        <Link href="/">
+          <div
+            className="flex items-center gap-1.5 shrink-0 cursor-pointer"
+          >
+            <div className="text-[#FF385C]">
+              <Home className="size-8 stroke-[2.5]" />
+            </div>
+            <span className="text-xl font-black tracking-tight text-[#FF385C] hidden md:block">
+              househive
+            </span>
+          </div></Link>
 
         {/* Center: Flat / Interior tabs */}
         <div

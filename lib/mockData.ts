@@ -199,7 +199,7 @@ export const FLATS_DATA: FlatItem[] = [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60"
     ],
-    amenities: ["Lift", "Security Guard", "Gas supply", "Broadband internet ready"],
+    amenities: ["Lift", "Security Guard", "Gas supply", "Broadband ready"],
     category: "Cozy",
   },
   {
@@ -234,6 +234,246 @@ export const FLATS_DATA: FlatItem[] = [
     amenities: ["Security", "Roof garden access", "Elevator"],
     category: "Cozy",
   },
+  {
+    id: "f10",
+    title: "Well-Decorated 3-Bed Flat in Mirpur DOHS",
+    location: "Mirpur DOHS",
+    zone: "Mirpur",
+    priceLakh: 115, // 1.15 Cr
+    bedrooms: 3,
+    sizeSqft: 1600,
+    images: [
+      "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["CCTV", "Modern Kitchen", "Generator Backup", "Lift"],
+    category: "Cozy",
+  },
+  {
+    id: "f11",
+    title: "Luxury 4-Bedroom Suite in Road 27",
+    location: "Dhanmondi Road 27",
+    zone: "Dhanmondi",
+    priceLakh: 210, // 2.1 Cr
+    bedrooms: 4,
+    sizeSqft: 2450,
+    images: [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Servant Quarter", "24/7 Security Guard", "2 Car Parking", "Lift"],
+    category: "Luxury",
+  },
+  {
+    id: "f12",
+    title: "Sleek 2-Bedroom Flat with Balcony",
+    location: "Gulshan 1",
+    zone: "Gulshan",
+    priceLakh: 165, // 1.65 Cr
+    bedrooms: 2,
+    sizeSqft: 1500,
+    images: [
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["CCTV Security", "Dedicated Parking", "Elevator", "Generator"],
+    category: "Cozy",
+  },
+  {
+    id: "f13",
+    title: "Premium 3-Bedroom Flat in Block E",
+    location: "Banani Block E",
+    zone: "Banani",
+    priceLakh: 260, // 2.6 Cr
+    bedrooms: 3,
+    sizeSqft: 2100,
+    images: [
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Top Tier Security", "Substation", "Modern Lobby", "Lift"],
+    category: "Luxury",
+  },
+  {
+    id: "f14",
+    title: "Compact 1-Bedroom Studio Apartment",
+    location: "Bashundhara Block C",
+    zone: "Bashundhara",
+    priceLakh: 48, // 48 Lakh
+    bedrooms: 1,
+    sizeSqft: 800,
+    images: [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Intercom", "Secure Gate Access", "Prepaid Gas Meter"],
+    category: "Cozy",
+  },
+  {
+    id: "f15",
+    title: "Family Apartment in Sector 7",
+    location: "Uttara Sector 7",
+    zone: "Uttara",
+    priceLakh: 125, // 1.25 Cr
+    bedrooms: 3,
+    sizeSqft: 1700,
+    images: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Elevator", "Gas connection", "Car park slot", "Guard"],
+    category: "Cozy",
+  },
+  {
+    id: "f16",
+    title: "Budget-Friendly 2-Bed Flat in Mirpur 2",
+    location: "Mirpur 2",
+    zone: "Mirpur",
+    priceLakh: 38, // 38 Lakh
+    bedrooms: 2,
+    sizeSqft: 950,
+    images: [
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Intercom", "Secure Entry", "Prepaid Gas"],
+    category: "Cozy",
+  },
+  {
+    id: "f17",
+    title: "Comfortable 2-Bed Apartment on Road 15",
+    location: "Dhanmondi Road 15",
+    zone: "Dhanmondi",
+    priceLakh: 90, // 90 Lakh
+    bedrooms: 2,
+    sizeSqft: 1200,
+    images: [
+      "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Lift", "CCTV", "Car Parking", "Generator Support"],
+    category: "Cozy",
+  },
+  {
+    id: "f18",
+    title: "Presidential Duplex Penthouse in Circle 2",
+    location: "Gulshan Circle 2",
+    zone: "Gulshan",
+    priceLakh: 450, // 4.5 Cr
+    bedrooms: 4,
+    sizeSqft: 3600,
+    images: [
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Duplex Layout", "High Speed Lift", "Private Terrace", "Pool Access"],
+    category: "Penthouse",
+  },
+  {
+    id: "f19",
+    title: "Luxury 3-Bed Residence in Block H",
+    location: "Banani Block H",
+    zone: "Banani",
+    priceLakh: 180, // 1.8 Cr
+    bedrooms: 3,
+    sizeSqft: 1800,
+    images: [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Generator Backup", "Lift", "CCTV", "Guard Room"],
+    category: "Luxury",
+  },
+  {
+    id: "f20",
+    title: "Charming 2-Bedroom Flat in Block I",
+    location: "Bashundhara Block I",
+    zone: "Bashundhara",
+    priceLakh: 75, // 75 Lakh
+    bedrooms: 2,
+    sizeSqft: 1150,
+    images: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Lift", "Secure Compound Gate", "Balcony"],
+    category: "Cozy",
+  },
+  {
+    id: "f21",
+    title: "Elegant 3-Bedroom Apartment in Sector 13",
+    location: "Uttara Sector 13",
+    zone: "Uttara",
+    priceLakh: 185, // 1.85 Cr
+    bedrooms: 3,
+    sizeSqft: 1950,
+    images: [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Generator", "Dedicated Parking slot", "Lift", "CCTV Camera"],
+    category: "Luxury",
+  },
+  {
+    id: "f22",
+    title: "Cozy 2-Bedroom Flat in Sector 11",
+    location: "Mirpur 11",
+    zone: "Mirpur",
+    priceLakh: 52, // 52 Lakh
+    bedrooms: 2,
+    sizeSqft: 1050,
+    images: [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Broadband ready", "Lift", "24/7 Security guard", "Gas connection"],
+    category: "Cozy",
+  },
+  {
+    id: "f23",
+    title: "Stately 4-Bed Residence on Road 32",
+    location: "Dhanmondi Road 32",
+    zone: "Dhanmondi",
+    priceLakh: 310, // 3.1 Cr
+    bedrooms: 4,
+    sizeSqft: 3200,
+    images: [
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Private Terrace", "2 Dedicated Parking spaces", "Lift", "Generator backup"],
+    category: "Duplex",
+  },
+  {
+    id: "f24",
+    title: "Lovely 2-Bedroom Flat in Block A",
+    location: "Banani Block A",
+    zone: "Banani",
+    priceLakh: 98, // 98 Lakh
+    bedrooms: 2,
+    sizeSqft: 1300,
+    images: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Roof Garden access", "Intercom", "Secure Entrance Gate", "Lift"],
+    category: "Cozy",
+  }
 ];
 
 export const INTERIORS_DATA: InteriorItem[] = [
@@ -351,4 +591,116 @@ export const INTERIORS_DATA: InteriorItem[] = [
     designer: "Studio Hive Design",
     category: "Minimalist",
   },
+  {
+    id: "i9",
+    title: "Industrial Modern Kitchen Workspace",
+    location: "Banani Road 11",
+    zone: "Banani",
+    spaceType: "Kitchen",
+    designStyle: "Contemporary",
+    images: [
+      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Vanguard Studio",
+    category: "Contemporary",
+  },
+  {
+    id: "i10",
+    title: "Classic Mahogany Full Home Remodel",
+    location: "Dhanmondi Road 27",
+    zone: "Dhanmondi",
+    spaceType: "Full Home",
+    designStyle: "Classic",
+    images: [
+      "https://images.unsplash.com/photo-1505693395321-883724634266?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Heritage Interiors",
+    category: "Classic",
+  },
+  {
+    id: "i11",
+    title: "Trendy Contemporary Living Area",
+    location: "Gulshan 2",
+    zone: "Gulshan",
+    spaceType: "Living Room",
+    designStyle: "Contemporary",
+    images: [
+      "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1617806118233-18e1db207f62?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Aura Interiors BD",
+    category: "Contemporary",
+  },
+  {
+    id: "i12",
+    title: "Scandinavian Modern Bedroom layout",
+    location: "Uttara Sector 3",
+    zone: "Uttara",
+    spaceType: "Bedroom",
+    designStyle: "Modern",
+    images: [
+      "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Vanguard Studio",
+    category: "Modern",
+  },
+  {
+    id: "i13",
+    title: "Sleek Minimalist Dining & Kitchen Concept",
+    location: "Mirpur 12",
+    zone: "Mirpur",
+    spaceType: "Kitchen",
+    designStyle: "Minimalist",
+    images: [
+      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Studio Hive Design",
+    category: "Minimalist",
+  },
+  {
+    id: "i14",
+    title: "Luxury Executive Work Suite design",
+    location: "Bashundhara Block G",
+    zone: "Bashundhara",
+    spaceType: "Office",
+    designStyle: "Luxury",
+    images: [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Pixel & Line Co.",
+    category: "Luxury",
+  },
+  {
+    id: "i15",
+    title: "Contemporary Mahogany Dining Room Design",
+    location: "Dhanmondi Road 15",
+    zone: "Dhanmondi",
+    spaceType: "Dining",
+    designStyle: "Contemporary",
+    images: [
+      "https://images.unsplash.com/photo-1617806118233-18e1db207f62?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Deco Crafts BD",
+    category: "Contemporary",
+  },
+  {
+    id: "i16",
+    title: "Minimalist Full Home Renovation Project",
+    location: "Uttara Sector 11",
+    zone: "Uttara",
+    spaceType: "Full Home",
+    designStyle: "Minimalist",
+    images: [
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&auto=format&fit=crop&q=60"
+    ],
+    designer: "Studio Hive Design",
+    category: "Minimalist",
+  }
 ];
