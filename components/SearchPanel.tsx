@@ -35,19 +35,22 @@ const SUGGESTED_DESTINATIONS = [
     name: "Banani",
     description: "For vibrant nightlife and trendy cafes",
     icon: Utensils,
-    bgClass: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
+    bgClass:
+      "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
   },
   {
     name: "Bashundhara",
     description: "Quiet residential zone and mega malls",
     icon: Building2,
-    bgClass: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400",
+    bgClass:
+      "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400",
   },
   {
     name: "Uttara",
     description: "Close to airport with parks and cafes",
     icon: Plane,
-    bgClass: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400",
+    bgClass:
+      "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400",
   },
   {
     name: "Dhanmondi",
@@ -80,7 +83,9 @@ interface SearchPanelProps {
     designStyle?: string;
   }) => void;
   collapsed?: boolean;
-  onExpand?: (cell?: "location" | "budget" | "home" | "space" | "style") => void;
+  onExpand?: (
+    cell?: "location" | "budget" | "home" | "space" | "style",
+  ) => void;
 }
 
 export function SearchPanel({
@@ -171,10 +176,11 @@ export function SearchPanel({
       const barWidth = capsuleWidth || el.offsetParent?.clientWidth || 800;
       const isCenter = activeCell === "budget" || activeCell === "space";
       const isRight = activeCell === "home" || activeCell === "style";
-      
+
       // On small screens/searchbar widths, make all popups take full searchbar width
       const useFullWidth = barWidth < 640;
-      const currentPopupW = (isCenter || useFullWidth) ? barWidth : barWidth * 0.5;
+      const currentPopupW =
+        isCenter || useFullWidth ? barWidth : barWidth * 0.5;
       let left = el.offsetLeft;
 
       if (isCenter || useFullWidth) {
@@ -197,7 +203,7 @@ export function SearchPanel({
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as HTMLElement;
-      
+
       // If the clicked element is detached from the DOM during render, ignore
       if (!document.body.contains(target)) {
         return;
@@ -338,7 +344,12 @@ export function SearchPanel({
                         }}
                         className="flex items-center gap-3 w-full text-left p-1.5 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 cursor-pointer"
                       >
-                        <div className={cn("flex items-center justify-center size-10 rounded-xl shrink-0", dest.bgClass)}>
+                        <div
+                          className={cn(
+                            "flex items-center justify-center size-10 rounded-xl shrink-0",
+                            dest.bgClass,
+                          )}
+                        >
                           <IconComponent className="size-5 stroke-[1.8]" />
                         </div>
                         <div className="flex flex-col justify-center min-w-0">
@@ -566,11 +577,8 @@ export function SearchPanel({
     }
   };
 
-  const location =
-    activeTab === "Flat" ? flatLocation : interiorLocation;
-  const locationLabel = location
-    ? location.split(" ")[0]
-    : "Anywhere";
+  const location = activeTab === "Flat" ? flatLocation : interiorLocation;
+  const locationLabel = location ? location.split(" ")[0] : "Anywhere";
   const secondLabel =
     activeTab === "Flat"
       ? flatBudget && flatBudget !== "Any Budget"
@@ -579,7 +587,8 @@ export function SearchPanel({
       : interiorSpaceType || "Space type";
   const thirdLabel =
     activeTab === "Flat"
-      ? flatBedrooms || (flatSize && flatSize !== "Any" ? flatSize : "Add details")
+      ? flatBedrooms ||
+        (flatSize && flatSize !== "Any" ? flatSize : "Add details")
       : interiorDesignStyle || "Style type";
 
   return (
@@ -595,13 +604,13 @@ export function SearchPanel({
         className={cn(
           "w-full rounded-full border transition-all duration-300 ease-in-out relative select-none flex items-center overflow-hidden pointer-events-auto",
           collapsed
-            ? "h-12 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.06)] hover:scale-[1.01] cursor-pointer"
+            ? "h-12 border border-[#DDDDDD] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-200 ease-[cubic-bezier(.2,0,0,1)] hover:border-[#CFCFCF] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08),0_8px_20px_rgba(0,0,0,0.12)] cursor-pointer"
             : cn(
-                "h-16 bg-[#f7f7f7] dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-[0_3px_12px_rgba(0,0,0,0.06)] cursor-default",
+                "h-16 bg-white dark:bg-zinc-900 border border-[#DDDDDD] shadow-[0_2px_8px_rgba(0,0,0,0.08),0_12px_28px_rgba(0,0,0,0.06)] ",
                 activeCell
-                  ? "bg-[#ebebeb] dark:bg-[#1C1C1E] border-transparent shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
-                  : "hover:shadow-[0_4px_16px_rgba(0,0,0,0.09)]"
-              )
+                  ? "bg-[#EBEBEB] shadow-none dark:bg-zinc-950"
+                  : "hover:shadow-[0_4px_16px_rgba(0,0,0,0.09)]",
+              ),
         )}
       >
         {/* Collapsed read-only view */}
@@ -610,7 +619,7 @@ export function SearchPanel({
             "absolute inset-0 flex items-center justify-between pl-6 pr-14 transition-all duration-300 ease-in-out w-full h-full",
             collapsed
               ? "opacity-100 scale-100 pointer-events-auto"
-              : "opacity-0 scale-90 pointer-events-none"
+              : "opacity-0 scale-90 pointer-events-none",
           )}
         >
           <button
@@ -635,7 +644,7 @@ export function SearchPanel({
                 "truncate max-w-[90px]",
                 (!flatBudget || flatBudget === "Any Budget") &&
                   activeTab === "Flat" &&
-                  "text-zinc-550 dark:text-zinc-400 font-medium"
+                  "text-zinc-550 dark:text-zinc-400 font-medium",
               )}
             >
               {secondLabel}
@@ -659,7 +668,7 @@ export function SearchPanel({
             "w-full h-full flex items-center transition-all duration-300 ease-in-out",
             collapsed
               ? "opacity-0 scale-90 pointer-events-none absolute inset-0"
-              : "opacity-100 scale-100 pointer-events-auto"
+              : "opacity-100 scale-100 pointer-events-auto",
           )}
         >
           {/* Sliding Active Cell Highlight Bubble (Airbnb-style background pill slider) */}
@@ -783,7 +792,9 @@ export function SearchPanel({
         <div
           className={cn(
             "absolute right-2 top-1/2 -translate-y-1/2 z-30 transition-all duration-300 ease-in-out",
-            collapsed ? "right-2 pointer-events-auto" : "right-3 hidden md:flex pointer-events-auto"
+            collapsed
+              ? "right-2 pointer-events-auto"
+              : "right-3 hidden md:flex pointer-events-auto",
           )}
         >
           <button
@@ -801,11 +812,18 @@ export function SearchPanel({
                 ? "size-8 shadow-sm shadow-red-500/20"
                 : cn(
                     "shadow-md shadow-red-500/30 hover:shadow-lg",
-                    activeCell ? "w-[118px] h-12 px-5 justify-between" : "size-12"
-                  )
+                    activeCell
+                      ? "w-[118px] h-12 px-5 justify-between"
+                      : "size-12",
+                  ),
             )}
           >
-            <Search className={cn("shrink-0 transition-all duration-300", collapsed ? "size-3.5 stroke-[2.5]" : "size-5")} />
+            <Search
+              className={cn(
+                "shrink-0 transition-all duration-300",
+                collapsed ? "size-3.5 stroke-[2.5]" : "size-5",
+              )}
+            />
             {!collapsed && activeCell && (
               <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300 fill-mode-both">
                 Search

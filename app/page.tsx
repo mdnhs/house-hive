@@ -9,7 +9,16 @@ import {
   FlatItem,
   InteriorItem,
 } from "@/lib/mockData";
-import { Globe, Menu, User, Home, Sun, Moon, Building2, Sofa } from "lucide-react";
+import {
+  Globe,
+  Menu,
+  User,
+  Home,
+  Sun,
+  Moon,
+  Building2,
+  Sofa,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function HomePage() {
@@ -24,10 +33,6 @@ export default function HomePage() {
     designStyle?: string;
   }>({ location: "" });
 
-  const [filteredFlats, setFilteredFlats] =
-    React.useState<FlatItem[]>(FLATS_DATA);
-  const [filteredInteriors, setFilteredInteriors] =
-    React.useState<InteriorItem[]>(INTERIORS_DATA);
   const [darkMode, setDarkMode] = React.useState(false);
 
   // States to handle scroll transitions and header overlay searches
@@ -56,94 +61,83 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Combined filter engine
-  const applyFilters = React.useCallback(() => {
-    if (activeTab === "Flat") {
-      let results = [...FLATS_DATA];
+  // Derive filtered results from source data + filters
+  const filteredFlats = React.useMemo(() => {
+    let results = [...FLATS_DATA];
 
-      // Location match
-      if (searchParams.location) {
-        const query = searchParams.location.toLowerCase();
-        results = results.filter(
-          (item) =>
-            item.location.toLowerCase().includes(query) ||
-            item.zone.toLowerCase().includes(query),
-        );
-      }
-
-      // Budget match
-      if (searchParams.budget && searchParams.budget !== "Any Budget") {
-        if (searchParams.budget === "Under 50 Lakh") {
-          results = results.filter((item) => item.priceLakh < 50);
-        } else if (searchParams.budget === "50L - 1Cr") {
-          results = results.filter(
-            (item) => item.priceLakh >= 50 && item.priceLakh <= 100,
-          );
-        } else if (searchParams.budget === "1Cr - 2Cr") {
-          results = results.filter(
-            (item) => item.priceLakh >= 100 && item.priceLakh <= 200,
-          );
-        } else if (searchParams.budget === "2Cr+") {
-          results = results.filter((item) => item.priceLakh > 200);
-        }
-      }
-
-      // Bedrooms match
-      if (searchParams.bedrooms) {
-        if (searchParams.bedrooms === "1 Bed") {
-          results = results.filter((item) => item.bedrooms === 1);
-        } else if (searchParams.bedrooms === "2 Bed") {
-          results = results.filter((item) => item.bedrooms === 2);
-        } else if (searchParams.bedrooms === "3 Bed") {
-          results = results.filter((item) => item.bedrooms === 3);
-        } else if (searchParams.bedrooms === "4+ Bed") {
-          results = results.filter((item) => item.bedrooms >= 4);
-        }
-      }
-
-      // Size match
-      if (searchParams.size && searchParams.size !== "Any") {
-        const minSize = parseInt(searchParams.size.replace("+", ""), 10);
-        if (!isNaN(minSize)) {
-          results = results.filter((item) => item.sizeSqft >= minSize);
-        }
-      }
-
-      setFilteredFlats(results);
-    } else {
-      let results = [...INTERIORS_DATA];
-
-      // Location match
-      if (searchParams.location) {
-        const query = searchParams.location.toLowerCase();
-        results = results.filter(
-          (item) =>
-            item.location.toLowerCase().includes(query) ||
-            item.zone.toLowerCase().includes(query),
-        );
-      }
-
-      // Space Type match
-      if (searchParams.spaceType) {
-        results = results.filter(
-          (item) => item.spaceType === searchParams.spaceType,
-        );
-      }
-
-      // Design Style match
-      if (searchParams.designStyle) {
-        results = results.filter(
-          (item) => item.designStyle === searchParams.designStyle,
-        );
-      }
-
-      setFilteredInteriors(results);
+    if (searchParams.location) {
+      const query = searchParams.location.toLowerCase();
+      results = results.filter(
+        (item) =>
+          item.location.toLowerCase().includes(query) ||
+          item.zone.toLowerCase().includes(query),
+      );
     }
-  }, [activeTab, searchParams]);
 
-  React.useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
+    if (searchParams.budget && searchParams.budget !== "Any Budget") {
+      if (searchParams.budget === "Under 50 Lakh") {
+        results = results.filter((item) => item.priceLakh < 50);
+      } else if (searchParams.budget === "50L - 1Cr") {
+        results = results.filter(
+          (item) => item.priceLakh >= 50 && item.priceLakh <= 100,
+        );
+      } else if (searchParams.budget === "1Cr - 2Cr") {
+        results = results.filter(
+          (item) => item.priceLakh >= 100 && item.priceLakh <= 200,
+        );
+      } else if (searchParams.budget === "2Cr+") {
+        results = results.filter((item) => item.priceLakh > 200);
+      }
+    }
+
+    if (searchParams.bedrooms) {
+      if (searchParams.bedrooms === "1 Bed") {
+        results = results.filter((item) => item.bedrooms === 1);
+      } else if (searchParams.bedrooms === "2 Bed") {
+        results = results.filter((item) => item.bedrooms === 2);
+      } else if (searchParams.bedrooms === "3 Bed") {
+        results = results.filter((item) => item.bedrooms === 3);
+      } else if (searchParams.bedrooms === "4+ Bed") {
+        results = results.filter((item) => item.bedrooms >= 4);
+      }
+    }
+
+    if (searchParams.size && searchParams.size !== "Any") {
+      const minSize = parseInt(searchParams.size.replace("+", ""), 10);
+      if (!isNaN(minSize)) {
+        results = results.filter((item) => item.sizeSqft >= minSize);
+      }
+    }
+
+    return results;
+  }, [searchParams]);
+
+  const filteredInteriors = React.useMemo(() => {
+    let results = [...INTERIORS_DATA];
+
+    if (searchParams.location) {
+      const query = searchParams.location.toLowerCase();
+      results = results.filter(
+        (item) =>
+          item.location.toLowerCase().includes(query) ||
+          item.zone.toLowerCase().includes(query),
+      );
+    }
+
+    if (searchParams.spaceType) {
+      results = results.filter(
+        (item) => item.spaceType === searchParams.spaceType,
+      );
+    }
+
+    if (searchParams.designStyle) {
+      results = results.filter(
+        (item) => item.designStyle === searchParams.designStyle,
+      );
+    }
+
+    return results;
+  }, [searchParams]);
 
   // Reset search params on tab switch
   const handleTabChange = (tab: "Flat" | "Interior") => {
@@ -172,24 +166,27 @@ export default function HomePage() {
 
   const handleClearFilters = () => {
     setSearchParams({ location: "" });
-    setFilteredFlats(FLATS_DATA);
-    setFilteredInteriors(INTERIORS_DATA);
   };
 
   // Determine if the header should show the expanded tall view
   const isHeaderExpanded = !isScrolled || isOverlaySearchOpen;
 
   return (
-    <div className="flex-1 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen transition-colors duration-300 font-sans">
+    <div
+      className="flex-1 bg-linear-to-b
+    from-white
+    via-white
+    to-[#FBFBFB] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen transition-colors duration-300 font-sans"
+    >
       {/* Tall/Sticky Morphing Header (Airbnb Style) */}
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 bg-white dark:bg-zinc-900 border-b border-zinc-200/80 dark:border-zinc-800 transition-all duration-300 ease-in-out flex flex-col",
-          isHeaderExpanded ? "h-60 overflow-visible" : "h-20 overflow-hidden",
+          "fixed top-0 left-0 right-0 z-50 bg-[#F7F7F7] dark:bg-zinc-900 border-b-3 border-[#EBEBEB]  dark:border-zinc-800 transition-all duration-300 ease-in-out flex flex-col",
+          isHeaderExpanded ? "h-50 overflow-visible" : "h-20 overflow-hidden",
         )}
       >
         {/* Top Row: Logo and Right Profile menu */}
-        <div className="h-20 w-full flex items-center justify-between px-6 sm:px-12 shrink-0">
+        <div className="h-20 w-full grid grid-cols-3 items-center px-6 sm:px-12 shrink-0">
           {/* Left: Brand Logo */}
           <div
             onClick={() => handleClearFilters()}
@@ -203,8 +200,36 @@ export default function HomePage() {
             </span>
           </div>
 
+          {/* Center: Flat / Interior tabs */}
+          <div className="hidden md:flex items-center justify-center gap-8 shrink-0">
+            <button
+              onClick={() => handleTabChange("Flat")}
+              className={cn(
+                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+                activeTab === "Flat"
+                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+              )}
+            >
+              <Building2 className="size-5" />
+              Flat
+            </button>
+            <button
+              onClick={() => handleTabChange("Interior")}
+              className={cn(
+                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+                activeTab === "Interior"
+                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+              )}
+            >
+              <Sofa className="size-5" />
+              Interior
+            </button>
+          </div>
+
           {/* Right: List property & Settings */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          <div className="flex items-center justify-end gap-3 sm:gap-4 shrink-0">
             <span className="hidden lg:inline-block text-sm font-semibold text-zinc-850 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/85 px-4 py-2.5 rounded-full cursor-pointer transition-colors">
               Share your space
             </span>
@@ -223,48 +248,13 @@ export default function HomePage() {
             </button>
 
             {/* Profile Menu Capsule */}
-            <div className="flex items-center gap-3 px-3 py-2 border border-zinc-200 dark:border-zinc-800 rounded-full hover:shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.05)] cursor-pointer transition-all bg-white dark:bg-zinc-900 select-none">
+            <div className="flex items-center gap-3 px-3 py-2 border border-[#DDDDDD] dark:border-zinc-800 rounded-full hover:shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_2px_12px_rgba(255,255,255,0.05)] cursor-pointer transition-all bg-white dark:bg-zinc-900 select-none">
               <Menu className="size-4 text-zinc-550 dark:text-zinc-355" />
-              <div className="size-[30px] rounded-full bg-zinc-500 flex items-center justify-center text-white shrink-0">
+              <div className="size-7.5 rounded-full bg-zinc-500 flex items-center justify-center text-white shrink-0">
                 <User className="size-4 fill-white" />
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Flat / Interior tabs (visible only when expanded) */}
-        <div
-          className={cn(
-            "flex items-center justify-center gap-8 transition-all duration-300 ease-in-out overflow-hidden shrink-0",
-            isHeaderExpanded
-              ? "h-10 opacity-100 scale-100 pointer-events-auto"
-              : "h-0 opacity-0 scale-90 pointer-events-none"
-          )}
-        >
-          <button
-            onClick={() => handleTabChange("Flat")}
-            className={cn(
-              "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
-              activeTab === "Flat"
-                ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
-                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
-            )}
-          >
-            <Building2 className="size-5" />
-            Flat
-          </button>
-          <button
-            onClick={() => handleTabChange("Interior")}
-            className={cn(
-              "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
-              activeTab === "Interior"
-                ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
-                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
-            )}
-          >
-            <Sofa className="size-5" />
-            Interior
-          </button>
         </div>
 
         {/* SearchPanel (morphs between collapsed pill in top row and full capsule below) */}
@@ -272,8 +262,8 @@ export default function HomePage() {
           className={cn(
             "absolute left-1/2 -translate-x-1/2 z-20 transition-all duration-300 ease-in-out pointer-events-none w-full",
             isHeaderExpanded
-              ? "top-32 max-w-4xl px-6 sm:px-12"
-              : "top-10 -translate-y-1/2 max-w-[360px] sm:max-w-[420px] px-4 sm:px-0",
+              ? "top-35 -translate-y-1/2 max-w-4xl px-6"
+              : "top-10 -translate-y-1/2 max-w-90 sm:max-w-105 px-4 sm:px-0",
           )}
         >
           <SearchPanel
@@ -307,7 +297,12 @@ export default function HomePage() {
       )}
 
       {/* Main Content Body */}
-      <main className="pt-60">
+      <main
+        className={cn(
+          "transition-all duration-300",
+          isHeaderExpanded ? "pt-50" : "pt-20",
+        )}
+      >
         {/* Results Gallery Section - sits directly below header */}
         <section className="bg-white dark:bg-[#0b0b0d] min-h-[50vh]">
           <ResultsGallery
