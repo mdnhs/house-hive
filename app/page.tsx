@@ -233,42 +233,47 @@ export default function HomePage() {
         </div>
 
         {/* Flat / Interior tabs (visible only when expanded) */}
-        {isHeaderExpanded && (
-          <div className="flex items-center justify-center gap-8 h-10 shrink-0">
-            <button
-              onClick={() => handleTabChange("Flat")}
-              className={cn(
-                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
-                activeTab === "Flat"
-                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
-                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
-              )}
-            >
-              <Building2 className="size-5" />
-              Flat
-            </button>
-            <button
-              onClick={() => handleTabChange("Interior")}
-              className={cn(
-                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
-                activeTab === "Interior"
-                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
-                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
-              )}
-            >
-              <Sofa className="size-5" />
-              Interior
-            </button>
-          </div>
-        )}
+        <div
+          className={cn(
+            "flex items-center justify-center gap-8 transition-all duration-300 ease-in-out overflow-hidden shrink-0",
+            isHeaderExpanded
+              ? "h-10 opacity-100 scale-100 pointer-events-auto"
+              : "h-0 opacity-0 scale-90 pointer-events-none"
+          )}
+        >
+          <button
+            onClick={() => handleTabChange("Flat")}
+            className={cn(
+              "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+              activeTab === "Flat"
+                ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+            )}
+          >
+            <Building2 className="size-5" />
+            Flat
+          </button>
+          <button
+            onClick={() => handleTabChange("Interior")}
+            className={cn(
+              "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+              activeTab === "Interior"
+                ? "text-zinc-950 dark:text-zinc-50 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
+                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+            )}
+          >
+            <Sofa className="size-5" />
+            Interior
+          </button>
+        </div>
 
         {/* SearchPanel (morphs between collapsed pill in top row and full capsule below) */}
         <div
           className={cn(
-            "flex items-center justify-center",
+            "absolute left-1/2 -translate-x-1/2 z-20 transition-all duration-300 ease-in-out pointer-events-none w-full",
             isHeaderExpanded
-              ? "flex-1 px-6 sm:px-12 pb-4"
-              : "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20",
+              ? "top-32 max-w-4xl px-6 sm:px-12"
+              : "top-10 -translate-y-1/2 max-w-[360px] sm:max-w-[420px] px-4 sm:px-0",
           )}
         >
           <SearchPanel
@@ -277,9 +282,9 @@ export default function HomePage() {
             activeCell={activeCell}
             setActiveCell={setActiveCell}
             collapsed={!isHeaderExpanded}
-            onExpand={() => {
+            onExpand={(targetCell) => {
               setIsOverlaySearchOpen(true);
-              setActiveCell("location");
+              setActiveCell(targetCell || "location");
             }}
             onSearch={(params) => {
               handleSearch(params);

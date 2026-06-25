@@ -28,7 +28,7 @@ export function SpaceTypeSelector({
   return (
     <div
       className={cn(
-        "relative flex flex-col px-6 py-3.5 cursor-pointer transition-all duration-200 select-none rounded-full flex-1 z-20",
+        "relative flex flex-col justify-center px-6 py-2.5 cursor-pointer transition-all duration-200 select-none rounded-full flex-1 z-20 h-full",
         isActive
           ? "bg-transparent"
           : "hover:bg-zinc-200/50 dark:hover:bg-zinc-700/50"
