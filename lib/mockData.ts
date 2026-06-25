@@ -9,6 +9,25 @@ export interface FlatItem {
   images: string[]; // Slideshow images
   amenities: string[];
   category: "Luxury" | "Cozy" | "Penthouse" | "Lake View" | "Duplex";
+
+  // Real Estate Property Overview fields
+  bathrooms?: number;
+  floor?: string;
+  parking?: string;
+  balconies?: number;
+  facing?: string;
+  furnishedStatus?: "Unfurnished" | "Semi-Furnished" | "Fully Furnished";
+  nearby?: {
+    schools: string[];
+    hospitals: string[];
+    shopping: string[];
+  };
+  company?: {
+    logo: string;
+    name: string;
+    verified: boolean;
+    totalListings: number;
+  };
 }
 
 export interface InteriorItem {
@@ -21,6 +40,18 @@ export interface InteriorItem {
   images: string[]; // Slideshow images
   designer: string;
   category: "Minimalist" | "Luxury" | "Modern" | "Classic" | "Contemporary";
+
+  // Interior Design execution specs
+  completionTime?: string; // e.g. "8 Weeks"
+  materialsUsed?: string[];
+  estimatedBudgetRange?: string; // e.g. "৳12L - ৳18L"
+  company?: {
+    logo: string;
+    name: string;
+    verified: boolean;
+    totalProjects: number;
+    experienceYears: number;
+  };
 }
 
 export const DHAKA_ZONES = [

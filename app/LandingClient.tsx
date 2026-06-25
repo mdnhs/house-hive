@@ -120,8 +120,6 @@ export function LandingClient() {
   const [searchParams, setSearchParams] = React.useState({ location: "" });
   const [activeGetawayTab, setActiveGetawayTab] = React.useState("Popular Zones");
 
-  const [selectedFlat, setSelectedFlat] = React.useState<FlatItem | null>(null);
-  const [selectedInterior, setSelectedInterior] = React.useState<InteriorItem | null>(null);
   const [favorites, setFavorites] = React.useState<string[]>([]);
 
   const {
@@ -265,7 +263,7 @@ export function LandingClient() {
                       priceText={formatPrice(flat.priceLakh)}
                       isFavorite={favorites.includes(flat.id)}
                       onToggleFavorite={(e) => toggleFavorite(flat.id, e)}
-                      onClick={() => setSelectedFlat(flat)}
+                      onClick={() => router.push(`/flat/${flat.id}`)}
                     />
                   </div>
                 ))}
@@ -288,7 +286,7 @@ export function LandingClient() {
                       priceText={formatPrice(flat.priceLakh)}
                       isFavorite={favorites.includes(flat.id)}
                       onToggleFavorite={(e) => toggleFavorite(flat.id, e)}
-                      onClick={() => setSelectedFlat(flat)}
+                      onClick={() => router.push(`/flat/${flat.id}`)}
                     />
                   </div>
                 ))}
@@ -311,7 +309,7 @@ export function LandingClient() {
                       priceText={formatPrice(flat.priceLakh)}
                       isFavorite={favorites.includes(flat.id)}
                       onToggleFavorite={(e) => toggleFavorite(flat.id, e)}
-                      onClick={() => setSelectedFlat(flat)}
+                      onClick={() => router.push(`/flat/${flat.id}`)}
                     />
                   </div>
                 ))}
@@ -337,7 +335,7 @@ export function LandingClient() {
                       isPriceBadge={true}
                       isFavorite={favorites.includes(interior.id)}
                       onToggleFavorite={(e) => toggleFavorite(interior.id, e)}
-                      onClick={() => setSelectedInterior(interior)}
+                      onClick={() => router.push(`/interior/${interior.id}`)}
                     />
                   </div>
                 ))}
@@ -361,7 +359,7 @@ export function LandingClient() {
                       isPriceBadge={true}
                       isFavorite={favorites.includes(interior.id)}
                       onToggleFavorite={(e) => toggleFavorite(interior.id, e)}
-                      onClick={() => setSelectedInterior(interior)}
+                      onClick={() => router.push(`/interior/${interior.id}`)}
                     />
                   </div>
                 ))}
@@ -385,7 +383,7 @@ export function LandingClient() {
                       isPriceBadge={true}
                       isFavorite={favorites.includes(interior.id)}
                       onToggleFavorite={(e) => toggleFavorite(interior.id, e)}
-                      onClick={() => setSelectedInterior(interior)}
+                      onClick={() => router.push(`/interior/${interior.id}`)}
                     />
                   </div>
                 ))}
@@ -445,134 +443,6 @@ export function LandingClient() {
         </section>
 
       </main>
-
-      {/* Flat Details Dialog */}
-      <Dialog open={!!selectedFlat} onOpenChange={(open) => !open && setSelectedFlat(null)}>
-        <DialogContent className="max-w-xl sm:max-w-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden rounded-[32px] border border-zinc-150/40 dark:border-zinc-800 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
-          {selectedFlat && (
-            <div className="flex flex-col">
-              <div className="relative aspect-[16/10] w-full">
-                <img
-                  src={selectedFlat.images[0]}
-                  alt={selectedFlat.title}
-                  className="size-full object-cover"
-                />
-                <div className="absolute bottom-4 left-4 bg-black/60 dark:bg-zinc-900/80 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-sm font-bold tracking-wide">
-                  {formatPrice(selectedFlat.priceLakh)} total
-                </div>
-              </div>
-              <div className="p-8 flex flex-col gap-5">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#FF385C] uppercase tracking-wider">
-                    <MapPin className="size-3.5" />
-                    {selectedFlat.location}
-                  </div>
-                  <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
-                    {selectedFlat.title}
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 py-4 border-y border-zinc-100 dark:border-zinc-800/85">
-                  <div className="flex flex-col bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-[20px]">
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-extrabold tracking-widest">Bedrooms</span>
-                    <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">
-                      {selectedFlat.bedrooms} Bedrooms
-                    </span>
-                  </div>
-                  <div className="flex flex-col bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-[20px]">
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-extrabold tracking-widest">Total Area</span>
-                    <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">
-                      {selectedFlat.sizeSqft} sqft
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2.5">
-                  <span className="text-xs font-bold text-zinc-400 dark:text-zinc-555 uppercase tracking-wider">Key Amenities</span>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {selectedFlat.amenities.map((amenity) => (
-                      <span
-                        key={amenity}
-                        className="px-3.5 py-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-semibold"
-                      >
-                        {amenity}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                  <button
-                    onClick={() => setSelectedFlat(null)}
-                    className="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-2xl text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Interior Details Dialog */}
-      <Dialog open={!!selectedInterior} onOpenChange={(open) => !open && setSelectedInterior(null)}>
-        <DialogContent className="max-w-xl sm:max-w-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden rounded-[32px] border border-zinc-150/40 dark:border-zinc-800 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
-          {selectedInterior && (
-            <div className="flex flex-col">
-              <div className="relative aspect-[16/10] w-full">
-                <img
-                  src={selectedInterior.images[0]}
-                  alt={selectedInterior.title}
-                  className="size-full object-cover"
-                />
-                <div className="absolute bottom-4 left-4 bg-black/60 dark:bg-zinc-900/80 backdrop-blur-md text-white px-4 py-2 rounded-2xl text-sm font-bold tracking-wide">
-                  {selectedInterior.designStyle} Style
-                </div>
-              </div>
-              <div className="p-8 flex flex-col gap-5">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#FF385C] uppercase tracking-wider">
-                    <MapPin className="size-3.5" />
-                    {selectedInterior.location}
-                  </div>
-                  <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
-                    {selectedInterior.title}
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 py-4 border-y border-zinc-100 dark:border-zinc-800/85">
-                  <div className="flex flex-col bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-[20px]">
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-extrabold tracking-widest">Space Type</span>
-                    <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">
-                      {selectedInterior.spaceType}
-                    </span>
-                  </div>
-                  <div className="flex flex-col bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-[20px]">
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-extrabold tracking-widest">Designer Studio</span>
-                    <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mt-1">
-                      {selectedInterior.designer}
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-sm leading-relaxed text-zinc-555 dark:text-zinc-400">
-                  This custom design showcases high-end finishes, bespoke furniture layouts, and curated light fixtures designed to bring comfort, functionality, and elevated aesthetic appeal to the home space.
-                </p>
-
-                <div className="flex items-center justify-end mt-4">
-                  <button
-                    onClick={() => setSelectedInterior(null)}
-                    className="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-2xl text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
       <Footer />
     </div>

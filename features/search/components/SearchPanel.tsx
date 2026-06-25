@@ -23,6 +23,7 @@ import { DesignStyleSelector, DESIGN_STYLES } from "./DesignStyleSelector";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ZONE_SUGGESTIONS, DHAKA_ZONES, ALL_SUGGESTIONS } from "@/lib/mockData";
+import { motion, AnimatePresence } from "motion/react";
 
 const SUGGESTED_DESTINATIONS = [
   {
@@ -115,19 +116,13 @@ export function SearchPanel({
   const spaceCellRef = React.useRef<HTMLDivElement>(null);
   const styleCellRef = React.useRef<HTMLDivElement>(null);
 
-  const [highlightStyle, setHighlightStyle] =
-    React.useState<React.CSSProperties>({
-      opacity: 0,
-      left: 0,
-      width: 0,
-    });
-
   // Shared popup refs for width/position animation
   const capsuleRef = React.useRef<HTMLDivElement>(null);
   const popupContentRef = React.useRef<HTMLDivElement>(null);
   const [showPopup, setShowPopup] = React.useState(false);
   const [popupStyle, setPopupStyle] = React.useState<React.CSSProperties>({
     left: 0,
+    width: 0,
   });
   const prevCollapsedRef = React.useRef(collapsed);
 
@@ -148,7 +143,7 @@ export function SearchPanel({
     };
   }, []);
 
-  // Calculate sliding bubble position + popup anchor position
+  // Calculate popup anchor position
   React.useEffect(() => {
     let activeRef: React.RefObject<HTMLDivElement | null> | null = null;
 
@@ -166,12 +161,6 @@ export function SearchPanel({
 
     if (activeRef && activeRef.current) {
       const el = activeRef.current;
-      setHighlightStyle({
-        opacity: 1,
-        left: `${el.offsetLeft}px`,
-        width: `${el.offsetWidth}px`,
-      });
-
       const barWidth = capsuleWidth || el.offsetParent?.clientWidth || 800;
       const isCenter = activeCell === "budget" || activeCell === "space";
       const isRight = activeCell === "home" || activeCell === "style";
@@ -188,12 +177,6 @@ export function SearchPanel({
       }
 
       setPopupStyle({ left: Math.max(0, left), width: currentPopupW });
-    } else {
-      setHighlightStyle({
-        opacity: 0,
-        left: 0,
-        width: 0,
-      });
     }
   }, [activeCell, activeTab, capsuleWidth]);
 
@@ -597,7 +580,7 @@ export function SearchPanel({
         className={cn(
           "w-full rounded-full border transition-all duration-300 ease-in-out relative select-none flex items-center overflow-hidden pointer-events-auto",
           collapsed
-            ? "h-12 border border-[#DDDDDD] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-200 ease-[cubic-bezier(.2,0,0,1)] hover:border-[#CFCFCF] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08),0_8px_20px_rgba(0,0,0,0.12)] cursor-pointer"
+            ? "h-12 border border-[#DDDDDD] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] hover:border-[#CFCFCF] hover:shadow-[0_2px_4px_rgba(0,0,0,0.08),0_8px_20px_rgba(0,0,0,0.12)] cursor-pointer"
             : cn(
                 "h-16 bg-white dark:bg-zinc-900 border border-[#DDDDDD] shadow-[0_2px_8px_rgba(0,0,0,0.08),0_12px_28px_rgba(0,0,0,0.06)] ",
                 activeCell
@@ -664,16 +647,17 @@ export function SearchPanel({
               : "opacity-100 scale-100 pointer-events-auto",
           )}
         >
-          {/* Sliding Active Cell Highlight Bubble */}
-          <div
-            className="absolute top-0 bottom-0 bg-white dark:bg-zinc-800 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-all duration-350 ease-out z-10 pointer-events-none"
-            style={highlightStyle}
-          />
-
           {activeTab === "Flat" ? (
             <div className="flex flex-col md:flex-row md:items-center relative w-full h-full">
               {/* Location Selector */}
-              <div ref={locationCellRef} className="flex-1 flex h-full z-20">
+              <div ref={locationCellRef} className="flex-1 flex h-full relative">
+                {activeCell === "location" && (
+                  <motion.div
+                    layoutId="activeSearchCellHighlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-850 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
                 <LocationAutocomplete
                   value={flatLocation}
                   onChange={(val) => {
@@ -688,13 +672,20 @@ export function SearchPanel({
                 />
               </div>
 
-              {/* Vertical Divider */}
-              {!activeCell && (
+              {/* Vertical Divider 1 */}
+              {activeCell !== "location" && activeCell !== "budget" && (
                 <div className="hidden md:block w-px h-8 bg-zinc-200 dark:bg-zinc-700 shrink-0 z-20" />
               )}
 
               {/* Budget Selector */}
-              <div ref={budgetCellRef} className="flex-1 flex h-full z-20">
+              <div ref={budgetCellRef} className="flex-1 flex h-full relative">
+                {activeCell === "budget" && (
+                  <motion.div
+                    layoutId="activeSearchCellHighlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-850 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
                 <BudgetSelector
                   value={flatBudget}
                   onChange={(val) => {
@@ -706,13 +697,20 @@ export function SearchPanel({
                 />
               </div>
 
-              {/* Vertical Divider */}
-              {!activeCell && (
+              {/* Vertical Divider 2 */}
+              {activeCell !== "budget" && activeCell !== "home" && (
                 <div className="hidden md:block w-px h-8 bg-zinc-200 dark:bg-zinc-700 shrink-0 z-20" />
               )}
 
               {/* Home Details Selector */}
-              <div ref={homeCellRef} className="flex-1 flex h-full z-20">
+              <div ref={homeCellRef} className="flex-1 flex h-full relative">
+                {activeCell === "home" && (
+                  <motion.div
+                    layoutId="activeSearchCellHighlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-850 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
                 <HomeDetailsSelector
                   bedrooms={flatBedrooms}
                   setBedrooms={setFlatBedrooms}
@@ -726,7 +724,14 @@ export function SearchPanel({
           ) : (
             <div className="flex flex-col md:flex-row md:items-center relative w-full h-full">
               {/* Location Selector */}
-              <div ref={locationCellRef} className="flex-1 flex h-full z-20">
+              <div ref={locationCellRef} className="flex-1 flex h-full relative">
+                {activeCell === "location" && (
+                  <motion.div
+                    layoutId="activeSearchCellHighlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-850 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
                 <LocationAutocomplete
                   value={interiorLocation}
                   onChange={(val) => {
@@ -741,13 +746,20 @@ export function SearchPanel({
                 />
               </div>
 
-              {/* Vertical Divider */}
-              {!activeCell && (
+              {/* Vertical Divider 1 */}
+              {activeCell !== "location" && activeCell !== "space" && (
                 <div className="hidden md:block w-px h-8 bg-zinc-200 dark:bg-zinc-700 shrink-0 z-20" />
               )}
 
               {/* Space Type Selector */}
-              <div ref={spaceCellRef} className="flex-1 flex h-full z-20">
+              <div ref={spaceCellRef} className="flex-1 flex h-full relative">
+                {activeCell === "space" && (
+                  <motion.div
+                    layoutId="activeSearchCellHighlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-850 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
                 <SpaceTypeSelector
                   value={interiorSpaceType}
                   onChange={(val) => {
@@ -759,13 +771,20 @@ export function SearchPanel({
                 />
               </div>
 
-              {/* Vertical Divider */}
-              {!activeCell && (
+              {/* Vertical Divider 2 */}
+              {activeCell !== "space" && activeCell !== "style" && (
                 <div className="hidden md:block w-px h-8 bg-zinc-200 dark:bg-zinc-700 shrink-0 z-20" />
               )}
 
               {/* Design Style Selector */}
-              <div ref={styleCellRef} className="flex-1 flex h-full z-20">
+              <div ref={styleCellRef} className="flex-1 flex h-full relative">
+                {activeCell === "style" && (
+                  <motion.div
+                    layoutId="activeSearchCellHighlight"
+                    className="absolute inset-0 bg-white dark:bg-zinc-850 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 35 }}
+                  />
+                )}
                 <DesignStyleSelector
                   value={interiorDesignStyle}
                   onChange={(val) => {
@@ -789,7 +808,7 @@ export function SearchPanel({
               : "hidden md:flex pointer-events-auto",
           )}
         >
-          <button
+          <motion.button
             onClick={(e) => {
               if (collapsed) {
                 e.stopPropagation();
@@ -798,17 +817,13 @@ export function SearchPanel({
                 handleSearch(e);
               }
             }}
-            className={cn(
-              "rounded-full bg-[#FF385C] hover:bg-[#E61E4D] text-white flex items-center justify-center transition-all duration-300 ease-out active:scale-[0.97] overflow-hidden cursor-pointer",
-              collapsed
-                ? "size-8 shadow-sm shadow-red-500/20"
-                : cn(
-                    "shadow-md shadow-red-500/30 hover:shadow-lg",
-                    activeCell
-                      ? "w-[118px] h-12 px-5 justify-between"
-                      : "size-12",
-                  ),
-            )}
+            animate={{
+              width: collapsed ? 32 : (activeCell ? 118 : 48),
+              height: collapsed ? 32 : 48,
+            }}
+            transition={{ type: "spring", stiffness: 380, damping: 35 }}
+            className="rounded-full bg-[#FF385C] hover:bg-[#E61E4D] text-white flex items-center justify-center cursor-pointer shrink-0 shadow-md shadow-red-500/30 hover:shadow-lg select-none overflow-hidden"
+            style={{ padding: collapsed ? "0" : (activeCell ? "0 16px" : "0") }}
           >
             <Search
               className={cn(
@@ -816,12 +831,20 @@ export function SearchPanel({
                 collapsed ? "size-3.5 stroke-[2.5]" : "size-5",
               )}
             />
-            {!collapsed && activeCell && (
-              <span className="text-sm font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300 fill-mode-both">
-                Search
-              </span>
-            )}
-          </button>
+            <AnimatePresence initial={false}>
+              {!collapsed && activeCell && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0, x: -10 }}
+                  animate={{ opacity: 1, width: "auto", x: 0 }}
+                  exit={{ opacity: 0, width: 0, x: -10 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="text-sm font-bold whitespace-nowrap ml-2"
+                >
+                  Search
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
       </div>
 
@@ -839,29 +862,46 @@ export function SearchPanel({
       )}
 
       {/* Shared Popup */}
-      {showPopup && activeCell && (
-        <div
-          className="absolute top-full mt-3 z-50 origin-top animate-in zoom-in-75 duration-500 pointer-events-auto"
-          style={{
-            left: popupStyle.left,
-            transition: "left 0.65s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div
-            className="bg-white dark:bg-zinc-900 rounded-[32px] shadow-[0_8px_28px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_28px_rgba(0,0,0,0.5)] border border-zinc-100/80 dark:border-zinc-800/80 overflow-hidden max-w-[calc(100vw-32px)]"
-            style={{
-              width: popupStyle.width,
-              transition: "width 0.65s cubic-bezier(0.4, 0, 0.2, 1)",
+      <AnimatePresence>
+        {showPopup && activeCell && (
+          <motion.div
+            className="absolute top-full mt-3 z-50 origin-top pointer-events-auto"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              left: popupStyle.left,
             }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 350, damping: 32 }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
-            <div ref={popupContentRef} key={activeCell} className="p-6">
-              {renderPopupContent()}
-            </div>
-          </div>
-        </div>
-      )}
+            <motion.div
+              layout="size"
+              className="bg-white dark:bg-zinc-900 rounded-[32px] shadow-[0_8px_28px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_28px_rgba(0,0,0,0.5)] border border-zinc-100/80 dark:border-zinc-800/80 overflow-hidden max-w-[calc(100vw-32px)]"
+              style={{ borderRadius: 32 }}
+              animate={{
+                width: popupStyle.width,
+              }}
+              transition={{ type: "spring", stiffness: 380, damping: 35 }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeCell || "empty"}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15 }}
+                  className="p-6"
+                >
+                  {renderPopupContent()}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
