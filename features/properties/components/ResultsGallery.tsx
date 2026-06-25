@@ -65,7 +65,7 @@ export function ResultsGallery({
         )}
       </div>
 
-      {/* Grid of Results - styled exactly like Airbnb high-density listings grid */}
+      {/* Grid of Results */}
       {searchType === "Flat" ? (
         flats.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-x-5 gap-y-10">
@@ -102,7 +102,7 @@ export function ResultsGallery({
                 subTitle={`${interior.spaceType} Space`}
                 thirdLine={interior.designer}
                 priceText={interior.designStyle}
-                isPriceBadge={true} // displays style tag differently
+                isPriceBadge={true}
                 isFavorite={favorites.includes(interior.id)}
                 onToggleFavorite={(e) => toggleFavorite(interior.id, e)}
                 onClick={() => setSelectedInterior(interior)}
@@ -224,7 +224,7 @@ export function ResultsGallery({
                   </div>
                 </div>
 
-                <p className="text-sm leading-relaxed text-zinc-550 dark:text-zinc-400">
+                <p className="text-sm leading-relaxed text-zinc-555 dark:text-zinc-400">
                   This custom design showcases high-end finishes, bespoke furniture layouts, and curated light fixtures designed to bring comfort, functionality, and elevated aesthetic appeal to the home space.
                 </p>
 
@@ -245,7 +245,6 @@ export function ResultsGallery({
   );
 }
 
-/* Individual Listing Card with Carousel image sliders, navigation arrows and indicator dots */
 interface ListingCardProps {
   images: string[];
   title: string;
@@ -293,7 +292,6 @@ function ListingCard({
       onMouseLeave={() => setIsHovered(false)}
       className="group flex flex-col cursor-pointer select-none"
     >
-      {/* Carousel Image container */}
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800">
         
         {/* Slides Container */}
@@ -329,7 +327,7 @@ function ListingCard({
           />
         </button>
 
-        {/* Left/Right Slider Navigation Buttons (Visible on Hover like Airbnb) */}
+        {/* Left/Right Slider Navigation Buttons */}
         {isHovered && images.length > 1 && (
           <>
             <button
@@ -365,10 +363,9 @@ function ListingCard({
         )}
       </div>
 
-      {/* Aligned listing texts */}
       <div className="flex flex-col mt-3 gap-0.5 text-[15px]">
         <div className="flex items-start justify-between">
-          <span className="font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[80%]">
+          <span className="font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[85%]">
             {location}
           </span>
           <span className="flex items-center gap-1 text-sm font-medium text-zinc-850 dark:text-zinc-200">

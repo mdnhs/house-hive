@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 interface CollapsedSearchPillProps {
   searchType: "Flat" | "Interior";
   onClick: () => void;
-  // Selected values to show dynamically
   location?: string;
   budget?: string;
   bedrooms?: string;
@@ -27,13 +26,11 @@ export function CollapsedSearchPill({
   designStyle = "",
 }: CollapsedSearchPillProps) {
   
-  // Format location label
   const locationLabel = React.useMemo(() => {
     if (!location) return "Anywhere";
-    return location.split(" ")[0] || "Anywhere"; // Show short area name
+    return location.split(" ")[0] || "Anywhere";
   }, [location]);
 
-  // Format second label
   const secondLabel = React.useMemo(() => {
     if (searchType === "Flat") {
       return budget && budget !== "Any Budget" ? budget : "Any budget";
@@ -42,7 +39,6 @@ export function CollapsedSearchPill({
     }
   }, [searchType, budget, spaceType]);
 
-  // Format third label
   const thirdLabel = React.useMemo(() => {
     if (searchType === "Flat") {
       const bedPart = bedrooms ? bedrooms : "";
@@ -79,7 +75,6 @@ export function CollapsedSearchPill({
         <span className="truncate max-w-[100px]">{thirdLabel}</span>
       </div>
 
-      {/* Small Red/Rose Search Circle Icon */}
       <div className="ml-4 flex items-center justify-center size-8 rounded-full bg-[#FF385C] text-white shrink-0">
         <Search className="size-4 stroke-[2.5]" />
       </div>

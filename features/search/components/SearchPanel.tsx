@@ -138,7 +138,6 @@ export function SearchPanel({
     if (!capsuleRef.current) return;
     const element = capsuleRef.current;
 
-    // Use ResizeObserver to continuously track size changes during CSS transitions
     const observer = new ResizeObserver(() => {
       setCapsuleWidth(element.offsetWidth);
     });
@@ -177,7 +176,6 @@ export function SearchPanel({
       const isCenter = activeCell === "budget" || activeCell === "space";
       const isRight = activeCell === "home" || activeCell === "style";
 
-      // On small screens/searchbar widths, make all popups take full searchbar width
       const useFullWidth = barWidth < 640;
       const currentPopupW =
         isCenter || useFullWidth ? barWidth : barWidth * 0.5;
@@ -204,7 +202,6 @@ export function SearchPanel({
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as HTMLElement;
 
-      // If the clicked element is detached from the DOM during render, ignore
       if (!document.body.contains(target)) {
         return;
       }
@@ -219,7 +216,7 @@ export function SearchPanel({
     };
   }, [setActiveCell]);
 
-  // Popup show/hide effect (delays mounting when expanding from collapsed state to match layout transitions)
+  // Popup show/hide effect
   React.useEffect(() => {
     const justExpanded = prevCollapsedRef.current && !collapsed;
     prevCollapsedRef.current = collapsed;
@@ -238,8 +235,6 @@ export function SearchPanel({
       return () => clearTimeout(timer);
     }
   }, [activeCell, collapsed]);
-
-  // Measured popup width logic removed in favor of exact 50% / 100% searchbar constraints
 
   // Location filter
   const currentLocation =
@@ -262,7 +257,6 @@ export function SearchPanel({
     }
   };
 
-  // Location popup input
   const [locInputValue, setLocInputValue] = React.useState("");
 
   React.useEffect(() => {
@@ -356,7 +350,7 @@ export function SearchPanel({
                           <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 leading-tight">
                             {dest.name}
                           </span>
-                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-medium leading-normal truncate">
+                          <span className="text-[11px] text-zinc-400 dark:text-zinc-505 font-medium leading-normal truncate">
                             {dest.description}
                           </span>
                         </div>
@@ -593,7 +587,6 @@ export function SearchPanel({
 
   return (
     <div className="w-full search-capsule-container relative">
-      {/* Morphing Capsule Wrapper */}
       <div
         ref={capsuleRef}
         onClick={() => {
@@ -671,14 +664,13 @@ export function SearchPanel({
               : "opacity-100 scale-100 pointer-events-auto",
           )}
         >
-          {/* Sliding Active Cell Highlight Bubble (Airbnb-style background pill slider) */}
+          {/* Sliding Active Cell Highlight Bubble */}
           <div
             className="absolute top-0 bottom-0 bg-white dark:bg-zinc-800 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-all duration-350 ease-out z-10 pointer-events-none"
             style={highlightStyle}
           />
 
           {activeTab === "Flat" ? (
-            /* Flat search layouts */
             <div className="flex flex-col md:flex-row md:items-center relative w-full h-full">
               {/* Location Selector */}
               <div ref={locationCellRef} className="flex-1 flex h-full z-20">
@@ -833,7 +825,7 @@ export function SearchPanel({
         </div>
       </div>
 
-      {/* Mobile search button - visible only when expanded */}
+      {/* Mobile search button */}
       {!collapsed && (
         <div className="p-2 flex md:hidden items-center justify-center z-30">
           <Button
@@ -846,7 +838,7 @@ export function SearchPanel({
         </div>
       )}
 
-      {/* Shared Popup - Single popup for all fields with width + position animation */}
+      {/* Shared Popup */}
       {showPopup && activeCell && (
         <div
           className="absolute top-full mt-3 z-50 origin-top animate-in zoom-in-75 duration-500 pointer-events-auto"

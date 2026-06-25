@@ -69,7 +69,6 @@ export function CategoryScroller({
 
   React.useEffect(() => {
     updateArrows();
-    // Delay arrow calculations briefly to ensure elements are fully layout-rendered
     const timer = setTimeout(updateArrows, 100);
     window.addEventListener("resize", updateArrows);
     return () => {
@@ -78,7 +77,6 @@ export function CategoryScroller({
     };
   }, [categories]);
 
-  // Track scrolling
   const handleScroll = () => {
     updateArrows();
   };
@@ -95,7 +93,7 @@ export function CategoryScroller({
 
   return (
     <div className="relative w-full max-w-[1600px] mx-auto px-6 sm:px-12 flex items-center select-none">
-      {/* Left Navigation Arrow (Airbnb style circular floating toggle) */}
+      {/* Left Navigation Arrow */}
       {showLeftArrow && (
         <button
           onClick={() => scroll("left")}
@@ -125,7 +123,6 @@ export function CategoryScroller({
                 "flex flex-col items-center justify-center pb-2.5 outline-none cursor-pointer group shrink-0 min-w-[64px] text-center relative gap-1.5"
               )}
             >
-              {/* Animated Icon Wrapper */}
               <div
                 className={cn(
                   "transition-all duration-300 ease-out transform group-hover:scale-108 group-hover:translate-y-[-1px]",
@@ -137,7 +134,6 @@ export function CategoryScroller({
                 <Icon className={cn("size-6 stroke-[1.75]", isActive ? "stroke-[2]" : "")} />
               </div>
 
-              {/* Category Label */}
               <span
                 className={cn(
                   "text-[12px] leading-none transition-colors duration-300 font-semibold tracking-wide",
@@ -149,7 +145,6 @@ export function CategoryScroller({
                 {category.name}
               </span>
 
-              {/* Bottom active/hover sliding indicator line */}
               <div
                 className={cn(
                   "absolute bottom-0 h-0.5 transition-all duration-300 ease-out rounded-full",
