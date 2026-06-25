@@ -793,8 +793,8 @@ export function SearchPanel({
           className={cn(
             "absolute right-2 top-1/2 -translate-y-1/2 z-30 transition-all duration-300 ease-in-out",
             collapsed
-              ? "right-2 pointer-events-auto"
-              : "right-3 hidden md:flex pointer-events-auto",
+              ? "pointer-events-auto"
+              : "hidden md:flex pointer-events-auto",
           )}
         >
           <button

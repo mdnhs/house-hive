@@ -203,42 +203,53 @@ export default function HomePage() {
           </div>
 
           {/* Center: Flat / Interior tabs */}
-          <div className="hidden md:flex items-center justify-center gap-8 shrink-0">
+          <div
+            className={cn(
+              "transition-all duration-500 ease-out",
+              "hidden md:flex items-center justify-center gap-8 shrink-0",
+              isHeaderExpanded
+                ? "translate-y-0 opacity-100"
+                : "-translate-y-full opacity-0 pointer-events-none",
+            )}
+          >
             <button
               onClick={() => handleTabChange("Flat")}
               className={cn(
-                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+                "font-semibold relative flex items-center gap-1 transition-all duration-300 cursor-pointer group",
+                // Base styling for the animated underline
+                "after:absolute after:content-[''] after:-bottom-0.5 after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50 after:transition-transform after:duration-300 after:ease-out",
                 activeTab === "Flat"
-                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
-                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+                  ? "text-zinc-950 dark:text-zinc-50 after:scale-x-100 after:origin-left"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 after:scale-x-0 after:origin-right",
               )}
             >
               <Image
-                src="/icons/flat-tab-icon.png"
+                src="/icons/icon-flat.png"
                 alt="Flat"
                 width={40}
                 height={40}
-                quality={100}
-                className="size-14 object-cover"
+                className="size-10 object-cover transition-transform duration-300 group-hover:scale-110 group-active:scale-95"
               />
               Flat
             </button>
+
             <button
               onClick={() => handleTabChange("Interior")}
               className={cn(
-                "text-lg font-semibold relative flex items-center gap-1.5 transition-all cursor-pointer",
+                "font-semibold relative flex items-center gap-1 transition-all duration-300 cursor-pointer group",
+                // Base styling for the animated underline
+                "after:absolute after:content-[''] after:-bottom-0.5 after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50 after:transition-transform after:duration-300 after:ease-out",
                 activeTab === "Interior"
-                  ? "text-zinc-950 dark:text-zinc-50 after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:rounded-full after:h-0.5 after:bg-zinc-950 dark:after:bg-zinc-50"
-                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+                  ? "text-zinc-950 dark:text-zinc-50 after:scale-x-100 after:origin-left"
+                  : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 after:scale-x-0 after:origin-right",
               )}
             >
               <Image
-                src="/icons/interior-tab-icon.png"
+                src="/icons/icon-interior.png"
                 alt="Interior"
                 width={40}
                 height={40}
-                quality={100}
-                className="size-14 object-cover"
+                className="size-10 object-cover transition-transform duration-300 group-hover:scale-110 group-active:scale-95"
               />
               Interior
             </button>
