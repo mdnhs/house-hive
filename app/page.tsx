@@ -20,6 +20,7 @@ import {
   Sofa,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = React.useState<"Flat" | "Interior">("Flat");
@@ -212,7 +213,14 @@ export default function HomePage() {
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
               )}
             >
-              <Building2 className="size-5" />
+              <Image
+                src="/icons/flat-tab-icon.png"
+                alt="Flat"
+                width={40}
+                height={40}
+                quality={100}
+                className="size-14 object-cover"
+              />
               Flat
             </button>
             <button
@@ -224,7 +232,14 @@ export default function HomePage() {
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
               )}
             >
-              <Sofa className="size-5" />
+              <Image
+                src="/icons/interior-tab-icon.png"
+                alt="Interior"
+                width={40}
+                height={40}
+                quality={100}
+                className="size-14 object-cover"
+              />
               Interior
             </button>
           </div>
