@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const spaceGroteskHeading = Space_Grotesk({subsets:['latin'],variable:'--font-heading'});
+const spaceGrotesk = Space_Grotesk({subsets:['latin'],variable:'--font-sans'});
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const hindSiliguri = Hind_Siliguri({
+  weight: ['400', '600', '700'],
+  subsets: ['bengali', 'latin'],
+  variable: '--font-hind',
 });
 
 export const metadata: Metadata = {
@@ -31,10 +26,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable, spaceGroteskHeading.variable)}
+      className={cn("h-full", "antialiased", "font-sans", spaceGrotesk.variable, hindSiliguri.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

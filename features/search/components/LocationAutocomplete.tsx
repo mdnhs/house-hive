@@ -54,7 +54,7 @@ export function LocationAutocomplete({
       }}
     >
       <div className="flex flex-col flex-1 min-w-0">
-        <span className="text-[11px] font-extrabold tracking-wide text-zinc-900 dark:text-zinc-100">
+        <span className="text-[11px] font-extrabold font-heading tracking-wide text-zinc-900 dark:text-zinc-100">
           {label}
         </span>
         <div className="relative flex items-center mt-0.5">

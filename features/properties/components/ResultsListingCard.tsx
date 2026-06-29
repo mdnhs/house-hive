@@ -4,7 +4,7 @@ import * as React from "react";
 import { Heart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface ListingCardProps {
+interface ResultsListingCardProps {
   images: string[];
   title: string;
   location: string;
@@ -14,13 +14,14 @@ interface ListingCardProps {
   priceText: string;
   isPriceBadge?: boolean;
   isFavorite: boolean;
+  isSelected?: boolean;
   onToggleFavorite: (e: React.MouseEvent) => void;
   onClick: () => void;
   onCardHover?: () => void;
   onCardLeave?: () => void;
 }
 
-export function ListingCard({
+export function ResultsListingCard({
   images,
   title,
   location,
@@ -30,13 +31,16 @@ export function ListingCard({
   priceText,
   isPriceBadge = false,
   isFavorite,
+  isSelected = false,
   onToggleFavorite,
   onClick,
   onCardHover,
   onCardLeave,
-}: ListingCardProps) {
+}: ResultsListingCardProps) {
   const [activeImgIndex, setActiveImgIndex] = React.useState(0);
   const [isHovered, setIsHovered] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => { setMounted(true); }, []);
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -53,10 +57,14 @@ export function ListingCard({
       onClick={onClick}
       onMouseEnter={() => { setIsHovered(true); onCardHover?.(); }}
       onMouseLeave={() => { setIsHovered(false); onCardLeave?.(); }}
-      className="group flex flex-col cursor-pointer select-none w-[187px] mx-auto"
+      className="group relative flex flex-col cursor-pointer select-none w-full mx-auto rounded-2xl transition-all duration-200"
     >
-      <div className="relative w-[187px] h-[187px] overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shrink-0">
-        
+      <div className="relative rounded-2xl">
+      {isSelected && mounted && (
+        <div className="shimmer-border z-0" />
+      )}
+      <div className="relative w-full aspect-[328/246] overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800 shrink-0">
+
         {/* Slides Container */}
         <div
           className="flex h-full transition-transform duration-300 ease-out"
@@ -125,14 +133,15 @@ export function ListingCard({
           </div>
         )}
       </div>
+      </div>
 
-      <div className="flex flex-col mt-3 gap-0.5 text-[15px]">
+      <div className={cn("flex flex-col gap-0.5 text-[15px]", isSelected ? "mt-1 px-4 pb-4" : "mt-3")}>
         <div className="flex items-start justify-between">
-          <span className="font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[85%]">
+          <span className={cn("font-bold truncate max-w-[85%]", isSelected && "bg-gradient-to-r from-[#FF385C] to-[#BD1E59] bg-clip-text text-transparent shimmer-text")}>
             {location}
           </span>
-          <span className="flex items-center gap-1 text-sm font-medium text-zinc-850 dark:text-zinc-200">
-            <Star className="size-3.5 fill-black text-black dark:fill-white dark:text-white shrink-0" />
+          <span className="flex items-center gap-1 text-sm font-medium text-zinc-850 dark:text-zinc-200 shrink-0">
+            <Star className="size-3.5 fill-[#FF385C] text-[#FF385C] shrink-0" />
             {rating}
           </span>
         </div>
@@ -149,7 +158,7 @@ export function ListingCard({
             </span>
           ) : (
             <>
-              <span className="font-bold text-zinc-950 dark:text-zinc-50">
+              <span className={cn("font-bold", isSelected && "bg-gradient-to-r from-[#FF385C] to-[#BD1E59] bg-clip-text text-transparent shimmer-text")}>
                 {priceText}
               </span>
               <span className="text-zinc-500 dark:text-zinc-400 text-sm font-normal">

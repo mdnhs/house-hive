@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const GETAWAY_TABS = [
   "Popular Zones",
-  "Residential Flats",
+  "Residential Properties",
   "Interior Design Studios",
   "Commercial Hubs",
 ];
@@ -22,18 +22,18 @@ const GETAWAY_TABS = [
 const GETAWAY_LINKS: Record<string, { city: string; category: string; slug: string }[]> = {
   "Popular Zones": [
     { city: "Gulshan", category: "Luxury Apartments", slug: "Gulshan" },
-    { city: "Banani", category: "Modern Flats", slug: "Banani" },
+    { city: "Banani", category: "Modern Properties", slug: "Banani" },
     { city: "Dhanmondi", category: "Heritage Homes", slug: "Dhanmondi" },
     { city: "Uttara", category: "Family Properties", slug: "Uttara" },
     { city: "Mirpur", category: "Budget Apartments", slug: "Mirpur" },
     { city: "Bashundhara", category: "Quiet Residences", slug: "Bashundhara" },
   ],
-  "Residential Flats": [
+  "Residential Properties": [
     { city: "Gulshan 2", category: "3-Bed Lake View", slug: "Gulshan-2" },
-    { city: "Banani Road 11", category: "Cozy 2-Bed Flats", slug: "Banani-Road-11" },
+    { city: "Banani Road 11", category: "Cozy 2-Bed Properties", slug: "Banani-Road-11" },
     { city: "Bashundhara Block B", category: "Family Apartments", slug: "Bashundhara-Block-B" },
-    { city: "Uttara Sector 11", category: "Compact 1-Bed Flats", slug: "Uttara-Sector-11" },
-    { city: "Mirpur DOHS", category: "Secure 3-Bed Flats", slug: "Mirpur-DOHS" },
+    { city: "Uttara Sector 11", category: "Compact 1-Bed Properties", slug: "Uttara-Sector-11" },
+    { city: "Mirpur DOHS", category: "Secure 3-Bed Properties", slug: "Mirpur-DOHS" },
     { city: "Dhanmondi Road 27", category: "Luxury 4-Bed Suites", slug: "Dhanmondi-Road-27" },
   ],
   "Interior Design Studios": [
@@ -77,7 +77,7 @@ function ScrollRow({ title, subtitle, children }: ScrollRowProps) {
       {/* Row Header with Navigation (Top Right) */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
+          <h2 className="text-xl sm:text-2xl font-bold font-heading tracking-tight text-zinc-950 dark:text-zinc-50">
             {title}
           </h2>
           <p className="text-xs text-zinc-500 mt-0.5">{subtitle}</p>
@@ -153,19 +153,20 @@ export function LandingClient() {
     size?: string;
     spaceType?: string;
     designStyle?: string;
+    propertyType?: string;
   }) => {
     const loc = params.location.trim() || "Anywhere";
     const slug = encodeURIComponent(loc.replace(/\s+/g, "-"));
 
     const nextParams = new URLSearchParams();
-    nextParams.set("type", params.type);
     if (params.budget && params.budget !== "Any Budget") nextParams.set("budget", params.budget);
     if (params.bedrooms) nextParams.set("bedrooms", params.bedrooms);
     if (params.size) nextParams.set("size", params.size);
     if (params.spaceType) nextParams.set("spaceType", params.spaceType);
     if (params.designStyle) nextParams.set("designStyle", params.designStyle);
+    if (params.propertyType) nextParams.set("propertyType", params.propertyType);
 
-    router.push(`/s/${slug}/homes?${nextParams.toString()}`);
+    router.push(`/s/${slug}/homes?type=${params.type}&${nextParams.toString()}`);
   };
 
   const handleDestinationClick = (name: string) => {
@@ -396,7 +397,7 @@ export function LandingClient() {
         {/* Inspiration for Getaways Section (Airbnb Style) */}
         <section className="bg-[#F7F7F7] dark:bg-zinc-900 border-t border-zinc-200/60 dark:border-zinc-800/80 py-14">
           <div className="max-w-[1600px] mx-auto px-6 sm:px-12">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold font-heading tracking-tight text-zinc-950 dark:text-zinc-50 mb-6">
               Browse properties & design companies by region
             </h2>
 

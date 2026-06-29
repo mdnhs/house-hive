@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { MapPin, Heart, Sparkles, User, Info, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FlatItem, InteriorItem } from "@/lib/mockData";
-import { ListingCard } from "./ListingCard";
+import { ResultsListingCard } from "./ResultsListingCard";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface ResultsGalleryProps {
@@ -13,6 +12,9 @@ interface ResultsGalleryProps {
   interiors: InteriorItem[];
   searchType: "Flat" | "Interior";
   onClearFilters: () => void;
+  onHoverCard?: (id: string | null) => void;
+  selectedCardId?: string | null;
+  onCardSelect?: (id: string | null) => void;
 }
 
 export function ResultsGallery({
@@ -20,8 +22,10 @@ export function ResultsGallery({
   interiors,
   searchType,
   onClearFilters,
+  onHoverCard,
+  selectedCardId,
+  onCardSelect,
 }: ResultsGalleryProps) {
-  const router = useRouter();
   const [favorites, setFavorites] = React.useState<string[]>([]);
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
@@ -30,6 +34,14 @@ export function ResultsGallery({
       prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
     );
   };
+
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!selectedCardId) return;
+    const el = document.getElementById(`result-card-${selectedCardId}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [selectedCardId]);
 
   const formatPrice = (priceLakh: number) => {
     if (priceLakh >= 100) {
@@ -44,8 +56,8 @@ export function ResultsGallery({
       {/* Title / Section Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
-            {searchType === "Flat" ? "Explore Premium Flats" : "Explore Curated Interiors"}
+          <h2 className="text-xl font-bold font-heading tracking-tight text-zinc-950 dark:text-zinc-50">
+            {searchType === "Flat" ? "Explore Premium Properties" : "Explore Curated Interiors"}
           </h2>
           <p className="text-xs text-zinc-500 mt-0.5">
             {searchType === "Flat" ? flats.length : interiors.length} listings match your selection
@@ -64,21 +76,25 @@ export function ResultsGallery({
       {/* Grid of Results */}
       {searchType === "Flat" ? (
         flats.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-x-5 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-10">
             {flats.map((flat) => (
-              <ListingCard
-                key={flat.id}
-                images={flat.images}
-                title={flat.title}
-                location={flat.location}
-                rating={(4.7 + (parseInt(flat.id.replace(/\D/g, "")) || 0) * 0.05).toFixed(2)}
-                subTitle={`${flat.bedrooms} Bed • ${flat.sizeSqft} sqft`}
-                thirdLine={flat.amenities.slice(0, 2).join(" • ")}
-                priceText={formatPrice(flat.priceLakh)}
-                isFavorite={favorites.includes(flat.id)}
-                onToggleFavorite={(e) => toggleFavorite(flat.id, e)}
-                onClick={() => router.push(`/flat/${flat.id}`)}
-              />
+              <div key={flat.id} id={`result-card-${flat.id}`}>
+                <ResultsListingCard
+                  images={flat.images}
+                  title={flat.title}
+                  location={flat.location}
+                  rating={(4.7 + (parseInt(flat.id.replace(/\D/g, "")) || 0) * 0.05).toFixed(2)}
+                  subTitle={`${flat.bedrooms} Bed • ${flat.sizeSqft} sqft`}
+                  thirdLine={flat.amenities.slice(0, 2).join(" • ")}
+                  priceText={formatPrice(flat.priceLakh)}
+                  isFavorite={favorites.includes(flat.id)}
+                  isSelected={selectedCardId === flat.id}
+                  onToggleFavorite={(e) => toggleFavorite(flat.id, e)}
+                  onClick={() => window.open(`/flat/${flat.id}`, '_blank')}
+                  onCardHover={() => onHoverCard?.(flat.id)}
+                  onCardLeave={() => onHoverCard?.(null)}
+                />
+              </div>
             ))}
           </div>
         ) : (
@@ -87,22 +103,26 @@ export function ResultsGallery({
       ) : (
         /* Interior Designs Grid */
         interiors.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-x-5 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-10">
             {interiors.map((interior) => (
-              <ListingCard
-                key={interior.id}
-                images={interior.images}
-                title={interior.title}
-                location={interior.location}
-                rating={(4.75 + (parseInt(interior.id.replace(/\D/g, "")) || 0) * 0.04).toFixed(2)}
-                subTitle={`${interior.spaceType} Space`}
-                thirdLine={interior.designer}
-                priceText={interior.designStyle}
-                isPriceBadge={true}
-                isFavorite={favorites.includes(interior.id)}
-                onToggleFavorite={(e) => toggleFavorite(interior.id, e)}
-                onClick={() => router.push(`/interior/${interior.id}`)}
-              />
+              <div key={interior.id} id={`result-card-${interior.id}`}>
+                <ResultsListingCard
+                  images={interior.images}
+                  title={interior.title}
+                  location={interior.location}
+                  rating={(4.75 + (parseInt(interior.id.replace(/\D/g, "")) || 0) * 0.04).toFixed(2)}
+                  subTitle={`${interior.spaceType} Space`}
+                  thirdLine={interior.designer}
+                  priceText={interior.designStyle}
+                  isPriceBadge={true}
+                  isFavorite={favorites.includes(interior.id)}
+                  isSelected={selectedCardId === interior.id}
+                  onToggleFavorite={(e) => toggleFavorite(interior.id, e)}
+                  onClick={() => window.open(`/interior/${interior.id}`, '_blank')}
+                  onCardHover={() => onHoverCard?.(interior.id)}
+                  onCardLeave={() => onHoverCard?.(null)}
+                />
+              </div>
             ))}
           </div>
         ) : (
@@ -118,7 +138,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-24 px-4 bg-zinc-50 dark:bg-zinc-900/10 rounded-[32px] border border-zinc-200/50 dark:border-zinc-800/80">
       <Info className="size-10 text-zinc-400 mb-3" />
-      <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-200">
+      <h3 className="text-base font-bold font-heading text-zinc-900 dark:text-zinc-200">
         No listings matched your filters
       </h3>
       <p className="text-zinc-500 dark:text-zinc-400 text-xs max-w-xs mt-1">

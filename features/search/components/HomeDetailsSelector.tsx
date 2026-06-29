@@ -8,6 +8,7 @@ interface HomeDetailsSelectorProps {
   setBedrooms: (val: string) => void;
   size: string;
   setSize: (val: string) => void;
+  propertyType: string;
   isActive?: boolean;
   onActivate?: () => void;
 }
@@ -20,11 +21,12 @@ export function HomeDetailsSelector({
   setBedrooms,
   size,
   setSize,
+  propertyType,
   isActive = false,
   onActivate,
 }: HomeDetailsSelectorProps) {
   const label = React.useMemo(() => {
-    const bedPart = bedrooms ? bedrooms : "";
+    const bedPart = propertyType === "Flat" && bedrooms ? bedrooms : "";
     const sizePart = size && size !== "Any" ? `${size} sqft` : "";
 
     if (bedPart && sizePart) {
@@ -37,7 +39,7 @@ export function HomeDetailsSelector({
       return sizePart;
     }
     return "Add details";
-  }, [bedrooms, size]);
+  }, [bedrooms, size, propertyType]);
 
   return (
     <div
@@ -51,8 +53,8 @@ export function HomeDetailsSelector({
         if (onActivate) onActivate();
       }}
     >
-      <span className="text-[11px] font-extrabold tracking-wide text-zinc-900 dark:text-zinc-100">
-        Home Details
+      <span className="text-[11px] font-extrabold font-heading tracking-wide text-zinc-900 dark:text-zinc-100">
+        Type
       </span>
       <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">
         {label}

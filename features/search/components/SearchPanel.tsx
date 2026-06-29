@@ -82,11 +82,21 @@ interface SearchPanelProps {
     size?: string;
     spaceType?: string;
     designStyle?: string;
+    propertyType?: string;
   }) => void;
   collapsed?: boolean;
   onExpand?: (
     cell?: "location" | "budget" | "home" | "space" | "style",
   ) => void;
+  searchParams?: {
+    location?: string;
+    budget?: string;
+    bedrooms?: string;
+    size?: string;
+    spaceType?: string;
+    designStyle?: string;
+    propertyType?: string;
+  };
 }
 
 export function SearchPanel({
@@ -97,12 +107,30 @@ export function SearchPanel({
   onSearch,
   collapsed = false,
   onExpand,
+  searchParams,
 }: SearchPanelProps) {
   // Flat state
   const [flatLocation, setFlatLocation] = React.useState("");
   const [flatBudget, setFlatBudget] = React.useState("Any Budget");
   const [flatBedrooms, setFlatBedrooms] = React.useState("");
   const [flatSize, setFlatSize] = React.useState("");
+  const [propertyType, setPropertyType] = React.useState("Flat"); // "Flat" | "Plot" | "Commercial Space"
+
+  // Sync state from searchParams prop
+  React.useEffect(() => {
+    if (searchParams) {
+      if (searchParams.location !== undefined) {
+        setFlatLocation(searchParams.location || "");
+        setInteriorLocation(searchParams.location || "");
+      }
+      if (searchParams.budget !== undefined) setFlatBudget(searchParams.budget || "Any Budget");
+      if (searchParams.bedrooms !== undefined) setFlatBedrooms(searchParams.bedrooms || "");
+      if (searchParams.size !== undefined) setFlatSize(searchParams.size || "");
+      if (searchParams.propertyType !== undefined) setPropertyType(searchParams.propertyType || "Flat");
+      if (searchParams.spaceType !== undefined) setInteriorSpaceType(searchParams.spaceType || "");
+      if (searchParams.designStyle !== undefined) setInteriorDesignStyle(searchParams.designStyle || "");
+    }
+  }, [searchParams]);
 
   // Interior state
   const [interiorLocation, setInteriorLocation] = React.useState("");
@@ -255,8 +283,9 @@ export function SearchPanel({
         type: "Flat",
         location: flatLocation,
         budget: flatBudget,
-        bedrooms: flatBedrooms,
+        bedrooms: propertyType === "Flat" ? flatBedrooms : undefined,
         size: flatSize,
+        propertyType: propertyType,
       });
     } else {
       onSearch({
@@ -353,7 +382,7 @@ export function SearchPanel({
               <span className="text-[11px] font-extrabold text-[#FF385C] uppercase tracking-widest text-left">
                 Budget Range
               </span>
-              <h3 className="text-base font-extrabold text-zinc-850 dark:text-zinc-100 text-left">
+              <h3 className="text-base font-extrabold font-heading text-zinc-850 dark:text-zinc-100 text-left">
                 💰 আপনার বাজেট কত?
               </h3>
             </div>
@@ -392,23 +421,24 @@ export function SearchPanel({
               <span className="text-[11px] font-extrabold text-[#FF385C] uppercase tracking-widest">
                 Configuration
               </span>
-              <h3 className="text-base font-extrabold text-zinc-850 dark:text-zinc-100">
-                🏠 What kind of home?
+              <h3 className="text-base font-extrabold font-heading text-zinc-850 dark:text-zinc-100">
+                🏠 What kind of property?
               </h3>
             </div>
+            {/* Property Type Selector */}
             <div className="flex flex-col gap-2.5">
               <span className="text-[11px] font-extrabold text-zinc-450 dark:text-zinc-500 uppercase tracking-widest">
-                Bedrooms
+                Property Type
               </span>
               <div className="flex flex-wrap gap-2">
-                {BEDROOM_OPTIONS.map((opt) => {
-                  const isSelected = flatBedrooms === opt;
+                {["Flat", "Plot", "Commercial Space"].map((type) => {
+                  const isSelected = propertyType === type;
                   return (
                     <button
-                      key={opt}
+                      key={type}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setFlatBedrooms(isSelected ? "" : opt);
+                        setPropertyType(type);
                       }}
                       className={cn(
                         "px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border",
@@ -417,15 +447,46 @@ export function SearchPanel({
                           : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-750",
                       )}
                     >
-                      {opt}
+                      {type}
                     </button>
                   );
                 })}
               </div>
             </div>
+            {/* Bedrooms (only for Flat) */}
+            {propertyType === "Flat" && (
+              <div className="flex flex-col gap-2.5">
+                <span className="text-[11px] font-extrabold text-zinc-450 dark:text-zinc-500 uppercase tracking-widest">
+                  Bedrooms
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {BEDROOM_OPTIONS.map((opt) => {
+                    const isSelected = flatBedrooms === opt;
+                    return (
+                      <button
+                        key={opt}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFlatBedrooms(isSelected ? "" : opt);
+                        }}
+                        className={cn(
+                          "px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border",
+                          isSelected
+                            ? "bg-[#FF385C] text-white border-transparent shadow-lg shadow-[#FF385C]/30 scale-[1.02]"
+                            : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-750",
+                        )}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {/* Size Selector */}
             <div className="flex flex-col gap-2.5">
               <span className="text-[11px] font-extrabold text-zinc-450 dark:text-zinc-500 uppercase tracking-widest">
-                Minimum Size
+                {propertyType === "Plot" ? "Plot Size" : "Minimum Size"}
               </span>
               <div className="flex flex-wrap gap-2">
                 {SIZE_OPTIONS.map((opt) => {
@@ -455,6 +516,7 @@ export function SearchPanel({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  setPropertyType("Flat");
                   setFlatBedrooms("");
                   setFlatSize("");
                 }}
@@ -482,7 +544,7 @@ export function SearchPanel({
               <span className="text-[11px] font-extrabold text-[#FF385C] uppercase tracking-widest">
                 Space Selection
               </span>
-              <h3 className="text-base font-extrabold text-zinc-850 dark:text-zinc-100">
+              <h3 className="text-base font-extrabold font-heading text-zinc-850 dark:text-zinc-100">
                 🏠 What kind of space?
               </h3>
             </div>
@@ -519,7 +581,7 @@ export function SearchPanel({
               <span className="text-[11px] font-extrabold text-[#FF385C] uppercase tracking-widest">
                 Aesthetic Style
               </span>
-              <h3 className="text-base font-extrabold text-zinc-850 dark:text-zinc-100">
+              <h3 className="text-base font-extrabold font-heading text-zinc-850 dark:text-zinc-100">
                 ✨ Design Style?
               </h3>
             </div>
@@ -564,8 +626,9 @@ export function SearchPanel({
       : interiorSpaceType || "Space type";
   const thirdLabel =
     activeTab === "Flat"
-      ? flatBedrooms ||
-        (flatSize && flatSize !== "Any" ? flatSize : "Add details")
+      ? propertyType !== "Flat"
+        ? `${propertyType}${flatSize && flatSize !== "Any" ? ` • ${flatSize} sqft` : " • Details"}`
+        : flatBedrooms || (flatSize && flatSize !== "Any" ? `${flatSize} sqft` : "Add details")
       : interiorDesignStyle || "Style type";
 
   return (
@@ -716,6 +779,7 @@ export function SearchPanel({
                   setBedrooms={setFlatBedrooms}
                   size={flatSize}
                   setSize={setFlatSize}
+                  propertyType={propertyType}
                   isActive={activeCell === "home"}
                   onActivate={() => setActiveCell("home")}
                 />

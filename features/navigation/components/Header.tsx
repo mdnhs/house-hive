@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Home, Sun, Moon, Globe, Menu, User, X, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Home, Sun, Moon, Menu, User, X, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SearchPanel } from "@/features/search/components/SearchPanel";
 import Link from "next/link";
@@ -55,6 +56,7 @@ export function Header({
   onClearFilters,
   onTabChange,
 }: HeaderProps) {
+  const router = useRouter();
   const isHeaderExpanded = !isScrolled || isOverlaySearchOpen;
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = React.useState(false);
@@ -112,7 +114,7 @@ export function Header({
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 bg-[#F7F7F7] dark:bg-zinc-900 border-b-3 border-[#EBEBEB] dark:border-zinc-800 transition-all duration-300 ease-in-out flex flex-col",
-        isHeaderExpanded ? "h-50 overflow-visible" : "h-20 overflow-hidden",
+        isHeaderExpanded ? "h-50 overflow-visible" : "h-20 overflow-visible",
       )}
     >
       {/* Top Row: Logo and Right Profile menu */}
@@ -125,7 +127,7 @@ export function Header({
             <div className="text-[#FF385C]">
               <Home className="size-8 stroke-[2.5]" />
             </div>
-            <span className="text-xl font-black tracking-tight text-[#FF385C] hidden md:block">
+            <span className="text-xl font-black tracking-tight font-heading text-[#FF385C] hidden md:block">
               househive
             </span>
           </div></Link>
@@ -143,7 +145,7 @@ export function Header({
           <button
             onClick={() => onTabChange("Flat")}
             className={cn(
-              "font-semibold relative flex items-center gap-1 transition-colors duration-300 pb-1 cursor-pointer group",
+              "font-semibold font-heading relative flex items-center gap-1 transition-colors duration-300 pb-1 cursor-pointer group",
               activeTab === "Flat"
                 ? "text-zinc-950 dark:text-zinc-50"
                 : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -159,13 +161,13 @@ export function Header({
             >
               <Image
                 src="/icons/icon-flat.png"
-                alt="Flat"
+                alt="Property"
                 width={40}
                 height={40}
                 className="size-10 object-cover"
               />
             </motion.div>
-            <span>Flat</span>
+            <span>Property</span>
             {activeTab === "Flat" && (
               <motion.div
                 layoutId="headerActiveTab"
@@ -178,7 +180,7 @@ export function Header({
           <button
             onClick={() => onTabChange("Interior")}
             className={cn(
-              "font-semibold relative flex items-center gap-1 transition-colors duration-300 pb-1 cursor-pointer group",
+              "font-semibold font-heading relative flex items-center gap-1 transition-colors duration-300 pb-1 cursor-pointer group",
               activeTab === "Interior"
                 ? "text-zinc-950 dark:text-zinc-50"
                 : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -213,8 +215,11 @@ export function Header({
 
         {/* Right: List property & Settings */}
         <div className="flex items-center justify-end gap-3 sm:gap-4 shrink-0">
-          <span className="hidden lg:inline-block text-sm font-semibold text-zinc-850 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/85 px-4 py-2.5 rounded-full cursor-pointer transition-colors">
-            Share your space
+          <span
+            onClick={() => router.push("/partner/onboarding")}
+            className="hidden lg:inline-block text-sm font-semibold text-zinc-850 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/85 px-4 py-2.5 rounded-full cursor-pointer transition-colors"
+          >
+            Become a partner
           </span>
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -226,9 +231,7 @@ export function Header({
               <Moon className="size-4.5" />
             )}
           </button>
-          <button className="p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 rounded-full text-zinc-655 dark:text-zinc-355 cursor-pointer">
-            <Globe className="size-4.5" />
-          </button>
+
 
           {/* Profile Menu Capsule Wrapper */}
           <div className="profile-menu-container relative">
@@ -245,21 +248,23 @@ export function Header({
             {/* Dropdown Menu Overlay */}
             {isProfileMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xl py-2 z-50 flex flex-col text-left">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsDashboardOpen(true);
-                    setIsProfileMenuOpen(false);
-                  }}
+                <span
+                  onClick={() => { router.push("/partner/dashboard"); setIsProfileMenuOpen(false); }}
                   className="px-4 py-3 text-xs font-black text-[#FF385C] hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors w-full text-left cursor-pointer flex items-center gap-2"
                 >
-                  💼 Agent Leads Dashboard
-                </button>
-                <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-1" />
-                <span className="px-4 py-2.5 text-xs text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-850 cursor-pointer">
-                  Share your space
+                  Partner Dashboard
                 </span>
-                <span className="px-4 py-2.5 text-xs text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-850 cursor-pointer">
+                <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-1" />
+                <span
+                  onClick={() => { router.push("/partner/onboarding"); setIsProfileMenuOpen(false); }}
+                  className="px-4 py-2.5 text-xs text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors w-full text-left cursor-pointer"
+                >
+                  Become a Partner
+                </span>
+                <span
+                  onClick={() => { setIsProfileMenuOpen(false); }}
+                  className="px-4 py-2.5 text-xs text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-850 transition-colors w-full text-left cursor-pointer"
+                >
                   Refer a friend
                 </span>
               </div>
@@ -282,6 +287,7 @@ export function Header({
           setActiveTab={setActiveTab}
           activeCell={activeCell}
           setActiveCell={setActiveCell}
+          searchParams={searchParams}
           collapsed={!isHeaderExpanded}
           onExpand={(targetCell) => {
             setIsOverlaySearchOpen(true);
@@ -300,7 +306,7 @@ export function Header({
         <DialogContent className="max-w-4xl max-h-[85vh] bg-white dark:bg-zinc-950 p-6 overflow-y-auto rounded-[32px] border border-zinc-150/40 dark:border-zinc-800 shadow-[0_12px_40px_rgba(0,0,0,0.18)] flex flex-col gap-5 outline-hidden">
           <div className="flex items-center justify-between border-b border-zinc-150 dark:border-zinc-800 pb-4 shrink-0">
             <div className="flex flex-col gap-0.5 text-left">
-              <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              <h2 className="text-xl font-bold font-heading text-zinc-900 dark:text-zinc-50">
                 💼 Agent Leads Dashboard
               </h2>
               <p className="text-[11px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider">
@@ -443,7 +449,7 @@ export function Header({
             ) : (
               <div className="flex flex-col items-center justify-center text-center py-20 text-zinc-400">
                 <ShieldCheck className="size-12 mb-3 stroke-[1.5]" />
-                <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-300">
+                <h4 className="text-sm font-bold font-heading text-zinc-800 dark:text-zinc-300">
                   No Leads Found
                 </h4>
                 <p className="text-xs text-zinc-500 mt-1 max-w-xs">

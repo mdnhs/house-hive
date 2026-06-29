@@ -9,6 +9,7 @@ export interface FlatItem {
   images: string[]; // Slideshow images
   amenities: string[];
   category: "Luxury" | "Cozy" | "Penthouse" | "Lake View" | "Duplex";
+  propertyType?: "Flat" | "Plot" | "Commercial Space";
 
   // Real Estate Property Overview fields
   bathrooms?: number;
@@ -504,6 +505,38 @@ export const FLATS_DATA: FlatItem[] = [
     ],
     amenities: ["Roof Garden access", "Intercom", "Secure Entrance Gate", "Lift"],
     category: "Cozy",
+  },
+  {
+    id: "f25",
+    title: "10 Katha Prime Residential Plot for Sale",
+    location: "Bashundhara Block I",
+    zone: "Bashundhara",
+    priceLakh: 450, // 4.5 Cr
+    bedrooms: 0,
+    sizeSqft: 7200, // 10 Katha ~ 7200 sqft
+    images: [
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1444653389962-8149286c578a?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Corner Plot", "Boundary Wall", "30ft Wide Road", "Electricity Connection"],
+    category: "Luxury",
+    propertyType: "Plot",
+  },
+  {
+    id: "f26",
+    title: "Premium Office Space in Corporate Tower",
+    location: "Gulshan Avenue",
+    zone: "Gulshan",
+    priceLakh: 620, // 6.2 Cr
+    bedrooms: 0,
+    sizeSqft: 3400,
+    images: [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=600&auto=format&fit=crop&q=60"
+    ],
+    amenities: ["Central AC", "Fire Safety", "4 Elevators", "Double Glazed Glass", "2 Parking slots"],
+    category: "Luxury",
+    propertyType: "Commercial Space",
   }
 ];
 
@@ -735,3 +768,84 @@ export const INTERIORS_DATA: InteriorItem[] = [
     category: "Minimalist",
   }
 ];
+
+export const LOCATION_COORDINATES: Record<string, [number, number]> = {
+  // [longitude, latitude] for maplibre (note that MapLibre uses [lng, lat])
+  "Gulshan 1": [90.4152, 23.7796],
+  "Gulshan 2": [90.4158, 23.7925],
+  "Gulshan Avenue": [90.4145, 23.7865],
+  "Gulshan Circle 1": [90.4152, 23.7796],
+  "Gulshan Circle 2": [90.4158, 23.7925],
+  
+  "Banani Block A": [90.4020, 23.7940],
+  "Banani Block B": [90.4005, 23.7960],
+  "Banani Block C": [90.3985, 23.7930],
+  "Banani Block E": [90.4040, 23.7905],
+  "Banani Block H": [90.4060, 23.7925],
+  "Banani Road 11": [90.4035, 23.7937],
+  
+  "Bashundhara R/A": [90.4255, 23.8194],
+  "Bashundhara Block A": [90.4220, 23.8160],
+  "Bashundhara Block B": [90.4260, 23.8175],
+  "Bashundhara Block C": [90.4290, 23.8190],
+  "Bashundhara Block D": [90.4315, 23.8210],
+  "Bashundhara Block G": [90.4340, 23.8240],
+  "Bashundhara Block I": [90.4365, 23.8270],
+  
+  "Uttara Sector 1": [90.3840, 23.8640],
+  "Uttara Sector 3": [90.3830, 23.8690],
+  "Uttara Sector 4": [90.3875, 23.8670],
+  "Uttara Sector 7": [90.3820, 23.8730],
+  "Uttara Sector 11": [90.3780, 23.8820],
+  "Uttara Sector 13": [90.3750, 23.8860],
+  
+  "Dhanmondi Road 27": [90.3725, 23.7535],
+  "Dhanmondi Road 32": [90.3770, 23.7505],
+  "Dhanmondi Road 15": [90.3740, 23.7445],
+  "Dhanmondi R/A": [90.3742, 23.7461],
+  
+  "Mirpur 1": [90.3540, 23.7950],
+  "Mirpur 2": [90.3620, 23.8010],
+  "Mirpur 10": [90.3695, 23.8070],
+  "Mirpur 11": [90.3720, 23.8120],
+  "Mirpur 12": [90.3670, 23.8215],
+  "Mirpur DOHS": [90.3760, 23.8320],
+};
+
+export const ZONE_COORDINATES: Record<string, [number, number]> = {
+  "Gulshan": [90.4158, 23.7925],
+  "Banani": [90.4042, 23.7937],
+  "Bashundhara": [90.4267, 23.8194],
+  "Uttara": [90.3795, 23.8759],
+  "Dhanmondi": [90.3742, 23.7461],
+  "Mirpur": [90.3687, 23.8069],
+  "Dhaka": [90.4125, 23.8103],
+};
+
+export function getCoordinates(location: string, zone?: string): [number, number] {
+  if (LOCATION_COORDINATES[location]) {
+    return LOCATION_COORDINATES[location];
+  }
+  if (zone && ZONE_COORDINATES[zone]) {
+    return ZONE_COORDINATES[zone];
+  }
+  
+  // Fuzzy matching for location
+  const locLower = location.toLowerCase();
+  for (const [key, coords] of Object.entries(LOCATION_COORDINATES)) {
+    if (locLower.includes(key.toLowerCase()) || key.toLowerCase().includes(locLower)) {
+      return coords;
+    }
+  }
+  
+  if (zone) {
+    const zoneLower = zone.toLowerCase();
+    for (const [key, coords] of Object.entries(ZONE_COORDINATES)) {
+      if (zoneLower.includes(key.toLowerCase()) || key.toLowerCase().includes(zoneLower)) {
+        return coords;
+      }
+    }
+  }
+  
+  return ZONE_COORDINATES["Dhaka"];
+}

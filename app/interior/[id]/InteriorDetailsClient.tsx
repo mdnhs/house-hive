@@ -227,7 +227,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-[28px] font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-snug">
+          <h1 className="text-2xl sm:text-[28px] font-black font-heading tracking-tight text-zinc-900 dark:text-zinc-50 leading-snug">
             {interior.title}
           </h1>
 
@@ -332,7 +332,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
             {/* Project Overview */}
             <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                <h2 className="text-xl font-bold font-heading text-zinc-900 dark:text-zinc-50">
                   {interior.designStyle} Portfolio curated by {interior.designer}
                 </h2>
                 <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
@@ -388,7 +388,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
 
             {/* 4. Project Description */}
             <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800">
-              <h4 className="text-base font-extrabold text-zinc-900 dark:text-zinc-150 mb-3">
+              <h4 className="text-base font-extrabold font-heading text-zinc-900 dark:text-zinc-150 mb-3">
                 Project Portfolio Description
               </h4>
               <p className="text-sm text-zinc-600 dark:text-zinc-350 leading-relaxed font-semibold">
@@ -399,7 +399,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
             {/* Optional Materials Used */}
             {materialsUsed.length > 0 && (
               <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800">
-                <h4 className="text-base font-extrabold text-zinc-900 dark:text-zinc-150 mb-4">
+                <h4 className="text-base font-extrabold font-heading text-zinc-900 dark:text-zinc-150 mb-4">
                   Materials Vetted & Used
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -497,7 +497,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
           {/* Similar Projects */}
           {similarProjects.length > 0 && (
             <div className="flex flex-col">
-              <h4 className="text-lg font-black text-zinc-900 dark:text-zinc-150 mb-1">
+              <h4 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-150 mb-1">
                 Similar Projects
               </h4>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-6">
@@ -514,7 +514,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
           {/* More Projects in Same Area */}
           {localAreaProjects.length > 0 && (
             <div className="flex flex-col mt-4">
-              <h4 className="text-lg font-black text-zinc-900 dark:text-zinc-150 mb-1">
+              <h4 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-150 mb-1">
                 More Projects in the Same Area
               </h4>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-6">
@@ -531,7 +531,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
           {/* Featured Premium Projects */}
           {featuredProjects.length > 0 && (
             <div className="flex flex-col mt-4">
-              <h4 className="text-lg font-black text-zinc-900 dark:text-zinc-150 mb-1">
+              <h4 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-150 mb-1">
                 Featured Luxury Portfolio Items
               </h4>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-6">
@@ -552,7 +552,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
         <DialogContent className="max-w-4xl h-[90vh] bg-white dark:bg-zinc-950 p-6 overflow-y-auto rounded-[32px] border border-zinc-150/40 dark:border-zinc-800 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
           <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+              <h2 className="text-lg font-bold font-heading text-zinc-900 dark:text-zinc-50">
                 All Portfolio Photos
               </h2>
               <button
@@ -593,7 +593,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 1 of 5 • Contact Details
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     What is your mobile number?
                   </h3>
                 </div>
@@ -647,7 +647,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 2 of 5 • Project Type
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     What project type are you planning?
                   </h3>
                 </div>
@@ -692,7 +692,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 3 of 5 • Budget
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     What is your design budget?
                   </h3>
                 </div>
@@ -737,7 +737,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 4 of 5 • Timeline
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     When would you like to start?
                   </h3>
                 </div>
@@ -782,7 +782,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 5 of 5 • Final Message
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     Additional notes for the designer
                   </h3>
                 </div>
@@ -826,7 +826,7 @@ export function InteriorDetailsClient({ interior }: InteriorDetailsClientProps) 
                 <div className="size-16 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-250 flex items-center justify-center text-emerald-500 shadow-md">
                   <CheckCircle className="size-8 stroke-[2.5]" />
                 </div>
-                <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-4 leading-tight">
+                <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-4 leading-tight">
                   Consultation Booked!
                 </h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-450 mt-2 max-w-[280px]">

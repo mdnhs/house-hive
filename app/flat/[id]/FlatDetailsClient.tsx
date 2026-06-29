@@ -24,16 +24,52 @@ import {
   GraduationCap,
   Activity,
   ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Play,
+  Pause,
+  Maximize,
+  Minimize,
+  Download,
 } from "lucide-react";
 import { useQueryStates, parseAsString } from "nuqs";
 import { cn } from "@/lib/utils";
-import { FlatItem, FLATS_DATA } from "@/lib/mockData";
+import { FlatItem, FLATS_DATA, getCoordinates } from "@/lib/mockData";
+import type { StyleSpecification } from "maplibre-gl";
+import { Map, MapMarker, MarkerContent, MarkerPopup, MapControls } from "@/components/ui/map";
+import { fetchModifiedStyle, LIGHT_STYLE_URL, DARK_STYLE_URL } from "@/lib/mapStyles";
+import { Loader2 } from "lucide-react";
 import { useTheme } from "@/features/theme/hooks/useTheme";
 import { useHeaderScroll } from "@/features/navigation/hooks/useHeaderScroll";
 import { Header } from "@/features/navigation/components/Header";
 import { Footer } from "@/features/navigation/components/Footer";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "motion/react";
+import { ListingCard } from "@/features/properties/components/ListingCard";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import Lightbox from "yet-another-react-lightbox";
+import Captions from "yet-another-react-lightbox/plugins/captions";
+import Counter from "yet-another-react-lightbox/plugins/counter";
+import DownloadPlugin from "yet-another-react-lightbox/plugins/download";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Share from "yet-another-react-lightbox/plugins/share";
+import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Video from "yet-another-react-lightbox/plugins/video";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/captions.css";
+import "yet-another-react-lightbox/plugins/counter.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 interface FlatDetailsClientProps {
   flat: FlatItem;
@@ -50,8 +86,30 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
   const { darkMode, setDarkMode } = useTheme();
   
   const [favorites, setFavorites] = React.useState<string[]>([]);
-  const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
+  const [lightboxIndex, setLightboxIndex] = React.useState(-1);
   const [showShareTooltip, setShowShareTooltip] = React.useState(false);
+
+  const [mapStyles, setMapStyles] = React.useState<{
+    light: StyleSpecification | string;
+    dark: StyleSpecification | string;
+  } | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      fetchModifiedStyle(LIGHT_STYLE_URL),
+      fetchModifiedStyle(DARK_STYLE_URL),
+    ])
+      .then(([light, dark]) => {
+        if (!cancelled) setMapStyles({ light, dark });
+      })
+      .catch(() => {
+        if (!cancelled) setMapStyles({ light: LIGHT_STYLE_URL, dark: DARK_STYLE_URL });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Sync inquiry modal overlay & step count via nuqs
   const [queryState, setQueryState] = useQueryStates(detailsSchema, {
@@ -96,6 +154,13 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
     );
   };
 
+  const toggleFavoriteId = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
+    );
+  };
+
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setShowShareTooltip(true);
@@ -129,11 +194,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
   const developerVerified = flat.company?.verified ?? true;
   const developerTotalListings = flat.company?.totalListings ?? 28;
 
-  // Price calculations for breakdown
-  const basePriceLakh = flat.priceLakh;
-  const regFeeLakh = flat.priceLakh * 0.05;
-  const agentCommissionLakh = flat.priceLakh * 0.01;
-  const totalCostLakh = flat.priceLakh + regFeeLakh + agentCommissionLakh;
+
 
   // Photo grid preparation (Airbnb 5-image style)
   const defaultHouseImages = [
@@ -143,7 +204,8 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
     "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=60",
     "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=60",
   ];
-  const gridImages = [...flat.images, ...defaultHouseImages].slice(0, 5);
+  const allImages = React.useMemo(() => [...flat.images, ...defaultHouseImages], [flat.images]);
+  const gridImages = React.useMemo(() => allImages.slice(0, 5), [allImages]);
 
   // Progressive inquiry wizard submission
   const handleSubmitInquiry = () => {
@@ -192,15 +254,15 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
 
   // Similar & Related listings algorithms
   const similarProperties = React.useMemo(() => {
-    return FLATS_DATA.filter((item) => item.id !== flat.id && item.bedrooms === flat.bedrooms).slice(0, 3);
+    return FLATS_DATA.filter((item) => item.id !== flat.id && item.bedrooms === flat.bedrooms).slice(0, 7);
   }, [flat]);
 
   const localAreaProperties = React.useMemo(() => {
-    return FLATS_DATA.filter((item) => item.id !== flat.id && item.zone === flat.zone).slice(0, 3);
+    return FLATS_DATA.filter((item) => item.id !== flat.id && item.zone === flat.zone).slice(0, 7);
   }, [flat]);
 
   const featuredProperties = React.useMemo(() => {
-    return FLATS_DATA.filter((item) => item.id !== flat.id && item.priceLakh > 200).slice(0, 3);
+    return FLATS_DATA.filter((item) => item.id !== flat.id && item.priceLakh > 200).slice(0, 7);
   }, [flat]);
 
   const headerSearchParams = {
@@ -259,7 +321,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-[28px] font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-snug">
+          <h1 className="text-2xl sm:text-[28px] font-black font-heading tracking-tight text-zinc-900 dark:text-zinc-50 leading-snug">
             {flat.title}
           </h1>
 
@@ -315,7 +377,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
               src={gridImages[0]}
               alt="Listing main"
               className="size-full object-cover group-hover:scale-[1.01] transition-transform duration-500 cursor-pointer"
-              onClick={() => setIsGalleryOpen(true)}
+              onClick={() => setLightboxIndex(0)}
             />
           </div>
           {gridImages.slice(1, 5).map((img, idx) => (
@@ -327,12 +389,12 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                 src={img}
                 alt={`Listing flat details ${idx + 1}`}
                 className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500 cursor-pointer"
-                onClick={() => setIsGalleryOpen(true)}
+                onClick={() => setLightboxIndex(idx + 1)}
               />
             </div>
           ))}
           <button
-            onClick={() => setIsGalleryOpen(true)}
+            onClick={() => setLightboxIndex(0)}
             className="absolute bottom-5 right-5 bg-white hover:bg-zinc-50 text-zinc-950 font-extrabold text-xs px-4.5 py-3 rounded-xl border border-zinc-200 shadow-md flex items-center gap-2 cursor-pointer transition-colors"
           >
             <Grid3X3 className="size-4" />
@@ -346,10 +408,10 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
             src={gridImages[0]}
             alt="Listing main view"
             className="size-full object-cover cursor-pointer"
-            onClick={() => setIsGalleryOpen(true)}
+            onClick={() => setLightboxIndex(0)}
           />
           <button
-            onClick={() => setIsGalleryOpen(true)}
+            onClick={() => setLightboxIndex(0)}
             className="absolute bottom-3 right-3 bg-white/95 text-zinc-950 text-xs px-3.5 py-2 rounded-xl border border-zinc-200 shadow-sm font-extrabold flex items-center gap-1.5"
           >
             <Grid3X3 className="size-3.5" />
@@ -364,11 +426,11 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
             {/* Property Overview */}
             <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-                  {flat.category} Flat offered by verified agency
+                <h2 className="text-xl font-bold font-heading text-zinc-900 dark:text-zinc-50">
+                  {flat.category} Property offered by verified agency
                 </h2>
                 <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-                  Apartment • For Sale • Vetted Security • {flat.location}
+                  {flat.propertyType === "Plot" ? "Plot" : flat.propertyType === "Commercial Space" ? "Commercial Space" : (flat.category === "Duplex" ? "Duplex House" : flat.category === "Penthouse" ? "Penthouse" : "Apartment")} • For Sale • Vetted Security • {flat.location}
                 </span>
               </div>
               <div className="size-12 rounded-full overflow-hidden bg-zinc-100 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center shrink-0">
@@ -410,10 +472,10 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
               </div>
               <div className="bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-2xl border border-zinc-150/40 dark:border-zinc-850 flex flex-col">
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-extrabold tracking-widest">
-                  Floor Level
+                  {flat.category === "Duplex" ? "Structure" : flat.category === "Penthouse" ? "Level" : "Floor Level"}
                 </span>
                 <span className="text-sm font-bold text-zinc-800 dark:text-zinc-250 mt-1">
-                  {floorLevel} Floor
+                  {flat.category === "Duplex" ? "2-Level Duplex" : flat.category === "Penthouse" ? "Top Floor Penthouse" : `${floorLevel} Floor`}
                 </span>
               </div>
               <div className="bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-2xl border border-zinc-150/40 dark:border-zinc-850 flex flex-col">
@@ -452,7 +514,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
 
             {/* 4. Description */}
             <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800">
-              <h4 className="text-base font-extrabold text-zinc-900 dark:text-zinc-150 mb-3">
+              <h4 className="text-base font-extrabold font-heading text-zinc-900 dark:text-zinc-150 mb-3">
                 Property Description
               </h4>
               <p className="text-sm text-zinc-600 dark:text-zinc-350 leading-relaxed font-semibold">
@@ -462,7 +524,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
 
             {/* 5. Amenities Vetted Grid */}
             <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800">
-              <h4 className="text-base font-extrabold text-zinc-900 dark:text-zinc-150 mb-4">
+              <h4 className="text-base font-extrabold font-heading text-zinc-900 dark:text-zinc-150 mb-4">
                 What this property offers
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -493,30 +555,48 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
 
             {/* 6. Location Block (MapCN Mock grid map + lists) */}
             <div className="pb-6 border-b border-zinc-100 dark:border-zinc-800 flex flex-col gap-5">
-              <h4 className="text-base font-extrabold text-zinc-900 dark:text-zinc-150">
+              <h4 className="text-base font-extrabold font-heading text-zinc-900 dark:text-zinc-150">
                 Location Details: {flat.location}, Dhaka
               </h4>
 
-              {/* clean HTML mock map container called MapCN */}
-              <div className="w-full h-64 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-150 dark:border-zinc-800 rounded-2xl relative overflow-hidden flex flex-col items-center justify-center select-none shadow-inner p-4">
-                {/* Visual Vector Grid Lines Styled via Tailwind */}
-                <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 opacity-15 pointer-events-none">
-                  {Array.from({ length: 24 }).map((_, idx) => (
-                    <div key={idx} className="border border-zinc-300 dark:border-zinc-600" />
-                  ))}
-                </div>
-                {/* Simulated Street Outlines */}
-                <div className="absolute inset-0 pointer-events-none opacity-20 flex flex-col gap-10 p-6 justify-center">
-                  <div className="w-full h-8 bg-zinc-200 dark:bg-zinc-850 rounded-full rotate-[15deg] transform scale-110" />
-                  <div className="w-full h-6 bg-zinc-200 dark:bg-zinc-850 rounded-full -rotate-[8deg] transform scale-110" />
-                </div>
-                {/* Center Map Pointer Marker */}
-                <div className="z-10 bg-[#FF385C] text-white p-3 rounded-full shadow-lg shadow-red-500/30 flex items-center justify-center animate-bounce">
-                  <MapPin className="size-6 stroke-[2]" />
-                </div>
-                <div className="z-10 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xs border border-zinc-200 dark:border-zinc-800 px-4 py-2 rounded-xl shadow-md text-[11px] font-black text-zinc-800 dark:text-zinc-200 mt-2">
-                  🗺️ MapCN: Vetted Coordinates for {flat.location}
-                </div>
+              {/* Real MapCN Map */}
+              <div className="w-full h-72 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-150 dark:border-zinc-800 rounded-2xl relative overflow-hidden shadow-inner">
+                {mapStyles ? (
+                  <Map
+                    center={getCoordinates(flat.location, flat.zone)}
+                    zoom={14}
+                    className="w-full h-full"
+                    styles={{ light: mapStyles.light, dark: mapStyles.dark }}
+                  >
+                    <MapMarker
+                      longitude={getCoordinates(flat.location, flat.zone)[0]}
+                      latitude={getCoordinates(flat.location, flat.zone)[1]}
+                    >
+                      <MarkerContent>
+                        <div className="bg-[#FF385C] text-white p-2.5 rounded-full shadow-lg shadow-red-500/30 flex items-center justify-center hover:scale-110 transition-transform duration-200">
+                          <MapPin className="size-5 stroke-[2.5]" />
+                        </div>
+                      </MarkerContent>
+                      <MarkerPopup closeButton={true}>
+                        <div className="p-2 min-w-[200px]">
+                          <div className="mb-1">
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
+                              {flat.propertyType === "Plot" ? "Plot" : flat.propertyType === "Commercial Space" ? "Commercial Space" : `${flat.category} Property`}
+                            </span>
+                          </div>
+                          <h5 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 line-clamp-1">{flat.title}</h5>
+                          <p className="text-xs text-zinc-500 mt-0.5">{flat.location}</p>
+                          <p className="text-xs font-semibold text-[#FF385C] mt-1.5">{flat.priceLakh >= 100 ? `৳${(flat.priceLakh / 100).toFixed(2).replace(/\.?0+$/, "")} Cr` : `৳${flat.priceLakh} Lakh`}</p>
+                        </div>
+                      </MarkerPopup>
+                    </MapMarker>
+                    <MapControls showZoom={true} showLocate={true} showFullscreen={true} />
+                  </Map>
+                ) : (
+                  <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl animate-pulse flex items-center justify-center">
+                    <Loader2 className="size-5 animate-spin text-zinc-400" />
+                  </div>
+                )}
               </div>
 
               {/* Nearby Lists */}
@@ -600,7 +680,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   {formatPrice(flat.priceLakh)}
                 </span>
                 <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
-                  Property Value • Estimated Registration Fees Apply
+                  Property Value
                 </span>
               </div>
 
@@ -623,32 +703,6 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   Schedule a Site Visit (Future)
                 </button>
               </div>
-
-              {/* Pricing breakdown list */}
-              <div className="flex flex-col gap-3.5 border-t border-zinc-100 dark:border-zinc-800 pt-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                <div className="flex items-center justify-between">
-                  <span className="underline">Property Value</span>
-                  <span className="text-zinc-800 dark:text-zinc-200">
-                    {formatPrice(basePriceLakh)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="underline">Govt Registration Fee (5%)</span>
-                  <span className="text-zinc-800 dark:text-zinc-200">
-                    {formatPrice(regFeeLakh)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="underline">Hive Agency Commission (1%)</span>
-                  <span className="text-zinc-800 dark:text-zinc-200">
-                    {formatPrice(agentCommissionLakh)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 pt-4 text-sm font-black text-zinc-900 dark:text-zinc-100">
-                  <span>Est. Project Total</span>
-                  <span>{formatPrice(totalCostLakh)}</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -658,84 +712,165 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
           {/* Similar Properties */}
           {similarProperties.length > 0 && (
             <div className="flex flex-col">
-              <h4 className="text-lg font-black text-zinc-900 dark:text-zinc-150 mb-1">
-                Similar Properties
-              </h4>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-6">
-                Vetted property recommendations with matching bedroom counts.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {similarProperties.map((item) => (
-                  <RelatedPropertyCard key={item.id} item={item} formatPrice={formatPrice} />
-                ))}
-              </div>
+              <Carousel className="w-full" opts={{ align: "start" }}>
+                <div className="flex items-end justify-between mb-6">
+                  <div className="flex flex-col">
+                    <h4 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-150 mb-1">
+                      Similar Properties
+                    </h4>
+                    <p className="text-xs text-zinc-405 dark:text-zinc-505">
+                      Vetted property recommendations with matching bedroom counts.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CarouselPrevious className="static translate-y-0 size-8 rounded-full" />
+                    <CarouselNext className="static translate-y-0 size-8 rounded-full" />
+                  </div>
+                </div>
+
+                <CarouselContent className="-ml-6">
+                  {similarProperties.map((item) => (
+                    <CarouselItem key={item.id} className="pl-6 basis-auto snap-start">
+                      <div className="w-[187px]">
+                        <ListingCard
+                          images={item.images}
+                          title={item.title}
+                          location={item.location}
+                          rating={(4.8 + (parseInt(item.id.replace(/\D/g, "")) || 0) * 0.03).toFixed(2)}
+                          subTitle={item.propertyType === "Plot" ? "Plot" : item.propertyType === "Commercial Space" ? "Commercial Space" : `${item.bedrooms} Bed • ${item.sizeSqft} sqft`}
+                          thirdLine={item.amenities.slice(0, 2).join(" • ")}
+                          priceText={formatPrice(item.priceLakh)}
+                          isFavorite={favorites.includes(item.id)}
+                          onToggleFavorite={(e) => toggleFavoriteId(item.id, e)}
+                          onClick={() => router.push(`/flat/${item.id}`)}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
           )}
 
-          {/* More Properties in Area */}
+          {/* Local Area Properties */}
           {localAreaProperties.length > 0 && (
-            <div className="flex flex-col mt-4">
-              <h4 className="text-lg font-black text-zinc-900 dark:text-zinc-150 mb-1">
-                More Properties in the Same Area
-              </h4>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-6">
-                Properties available in the {flat.zone} sector.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {localAreaProperties.map((item) => (
-                  <RelatedPropertyCard key={item.id} item={item} formatPrice={formatPrice} />
-                ))}
-              </div>
+            <div className="flex flex-col mt-6">
+              <Carousel className="w-full" opts={{ align: "start" }}>
+                <div className="flex items-end justify-between mb-6">
+                  <div className="flex flex-col">
+                    <h4 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-150 mb-1">
+                      More Properties in the Same Area
+                    </h4>
+                    <p className="text-xs text-zinc-405 dark:text-zinc-505">
+                      Properties available in the {flat.zone} sector.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CarouselPrevious className="static translate-y-0 size-8 rounded-full" />
+                    <CarouselNext className="static translate-y-0 size-8 rounded-full" />
+                  </div>
+                </div>
+
+                <CarouselContent className="-ml-6">
+                  {localAreaProperties.map((item) => (
+                    <CarouselItem key={item.id} className="pl-6 basis-auto snap-start">
+                      <div className="w-[187px]">
+                        <ListingCard
+                          images={item.images}
+                          title={item.title}
+                          location={item.location}
+                          rating={(4.8 + (parseInt(item.id.replace(/\D/g, "")) || 0) * 0.03).toFixed(2)}
+                          subTitle={item.propertyType === "Plot" ? "Plot" : item.propertyType === "Commercial Space" ? "Commercial Space" : `${item.bedrooms} Bed • ${item.sizeSqft} sqft`}
+                          thirdLine={item.amenities.slice(0, 2).join(" • ")}
+                          priceText={formatPrice(item.priceLakh)}
+                          isFavorite={favorites.includes(item.id)}
+                          onToggleFavorite={(e) => toggleFavoriteId(item.id, e)}
+                          onClick={() => router.push(`/flat/${item.id}`)}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
           )}
 
           {/* Featured Properties */}
           {featuredProperties.length > 0 && (
-            <div className="flex flex-col mt-4">
-              <h4 className="text-lg font-black text-zinc-900 dark:text-zinc-150 mb-1">
-                Featured Premium Listings
-              </h4>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-6">
-                High-value luxury properties vetted for absolute quality.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {featuredProperties.map((item) => (
-                  <RelatedPropertyCard key={item.id} item={item} formatPrice={formatPrice} />
-                ))}
-              </div>
+            <div className="flex flex-col mt-6">
+              <Carousel className="w-full" opts={{ align: "start" }}>
+                <div className="flex items-end justify-between mb-6">
+                  <div className="flex flex-col">
+                    <h4 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-150 mb-1">
+                      Featured Premium Listings
+                    </h4>
+                    <p className="text-xs text-zinc-405 dark:text-zinc-505">
+                      High-value luxury properties vetted for absolute quality.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CarouselPrevious className="static translate-y-0 size-8 rounded-full" />
+                    <CarouselNext className="static translate-y-0 size-8 rounded-full" />
+                  </div>
+                </div>
+
+                <CarouselContent className="-ml-6">
+                  {featuredProperties.map((item) => (
+                    <CarouselItem key={item.id} className="pl-6 basis-auto snap-start">
+                      <div className="w-[187px]">
+                        <ListingCard
+                          images={item.images}
+                          title={item.title}
+                          location={item.location}
+                          rating={(4.8 + (parseInt(item.id.replace(/\D/g, "")) || 0) * 0.03).toFixed(2)}
+                          subTitle={item.propertyType === "Plot" ? "Plot" : item.propertyType === "Commercial Space" ? "Commercial Space" : `${item.bedrooms} Bed • ${item.sizeSqft} sqft`}
+                          thirdLine={item.amenities.slice(0, 2).join(" • ")}
+                          priceText={formatPrice(item.priceLakh)}
+                          isFavorite={favorites.includes(item.id)}
+                          onToggleFavorite={(e) => toggleFavoriteId(item.id, e)}
+                          onClick={() => router.push(`/flat/${item.id}`)}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
           )}
         </div>
       </main>
 
-      {/* Gallery Modal Fullscreen Grid */}
-      <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-        <DialogContent className="max-w-4xl h-[90vh] bg-white dark:bg-zinc-950 p-6 overflow-y-auto rounded-[32px] border border-zinc-150/40 dark:border-zinc-800 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-                All Property Photos
-              </h2>
-              <button
-                onClick={() => setIsGalleryOpen(false)}
-                className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-650 cursor-pointer transition-colors"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {gridImages.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`Gallery view ${idx + 1}`}
-                  className="w-full aspect-[4/3] object-cover rounded-2xl border border-zinc-150/40 dark:border-zinc-800 shadow-sm"
-                />
-              ))}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Lightbox Gallery */}
+      <Lightbox
+        index={lightboxIndex}
+        slides={allImages.map((src, idx) => ({
+          src,
+          title: flat.title,
+          description: `Photo ${idx + 1} of ${allImages.length} • ${flat.location}`,
+        }))}
+        open={lightboxIndex >= 0}
+        close={() => setLightboxIndex(-1)}
+        plugins={[Captions, Counter, DownloadPlugin, Fullscreen, Share, Slideshow, Thumbnails, Video, Zoom]}
+        animation={{ zoom: 600 }}
+        zoom={{
+          maxZoomPixelRatio: 5,
+          zoomInMultiplier: 2,
+          scrollToZoom: true,
+        }}
+        render={{
+          iconPrev: () => <ChevronLeft className="size-6 text-white" />,
+          iconNext: () => <ChevronRight className="size-6 text-white" />,
+          iconClose: () => <X className="size-6 text-white" />,
+          iconZoomIn: () => <ZoomIn className="size-5 text-white" />,
+          iconZoomOut: () => <ZoomOut className="size-5 text-white" />,
+          iconSlideshowPlay: () => <Play className="size-5 text-white" />,
+          iconSlideshowPause: () => <Pause className="size-5 text-white" />,
+          iconEnterFullscreen: () => <Maximize className="size-5 text-white" />,
+          iconExitFullscreen: () => <Minimize className="size-5 text-white" />,
+          iconDownload: () => <Download className="size-5 text-white" />,
+          iconShare: () => <Share2 className="size-5 text-white" />,
+        }}
+      />
 
       {/* Progressive Step-by-Step Inquiry Dialog (Airbnb Style Modal) */}
       <Dialog open={queryState.inquiry === "true"} onOpenChange={(open) => !open && handleCloseInquiry()}>
@@ -754,7 +889,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 1 of 5 • Verification
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     What is your mobile number?
                   </h3>
                 </div>
@@ -808,7 +943,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 2 of 5 • Planning
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     When are you planning to buy?
                   </h3>
                 </div>
@@ -853,7 +988,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 3 of 5 • Budget
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     What is your budget limit?
                   </h3>
                 </div>
@@ -904,7 +1039,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 4 of 5 • Timings
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     When is your preferred contact time?
                   </h3>
                 </div>
@@ -949,7 +1084,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                   <span className="text-[10px] text-[#FF385C] font-black uppercase tracking-widest">
                     Step 5 of 5 • Final Message
                   </span>
-                  <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-1">
+                  <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-1">
                     Additional notes for the agent
                   </h3>
                 </div>
@@ -993,7 +1128,7 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
                 <div className="size-16 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-250 flex items-center justify-center text-emerald-500 shadow-md">
                   <CheckCircle className="size-8 stroke-[2.5]" />
                 </div>
-                <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-4 leading-tight">
+                <h3 className="text-lg font-black font-heading text-zinc-900 dark:text-zinc-50 mt-4 leading-tight">
                   Request Submitted!
                 </h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-450 mt-2 max-w-[280px]">
@@ -1017,41 +1152,4 @@ export function FlatDetailsClient({ flat }: FlatDetailsClientProps) {
   );
 }
 
-// Sub-component related properties card
-function RelatedPropertyCard({
-  item,
-  formatPrice,
-}: {
-  item: FlatItem;
-  formatPrice: (priceLakh: number) => string;
-}) {
-  const router = useRouter();
-  return (
-    <div
-      onClick={() => router.push(`/flat/${item.id}`)}
-      className="group bg-white dark:bg-zinc-900 border border-zinc-150/40 dark:border-zinc-800/80 rounded-2xl overflow-hidden hover:shadow-md cursor-pointer transition-all duration-300 flex flex-col"
-    >
-      <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
-        <img
-          src={item.images[0]}
-          alt={item.title}
-          className="size-full object-cover group-hover:scale-102 transition-transform duration-500"
-        />
-        <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-lg text-[10px] font-black">
-          {formatPrice(item.priceLakh)}
-        </div>
-      </div>
-      <div className="p-4 flex flex-col gap-1">
-        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest truncate">
-          {item.location}
-        </span>
-        <h5 className="font-extrabold text-sm text-zinc-800 dark:text-zinc-250 truncate group-hover:text-[#FF385C] transition-colors leading-tight">
-          {item.title}
-        </h5>
-        <span className="text-[11px] font-semibold text-zinc-450 dark:text-zinc-500 mt-1">
-          {item.bedrooms} Bed • {item.sizeSqft} sqft • {item.category}
-        </span>
-      </div>
-    </div>
-  );
-}
+
